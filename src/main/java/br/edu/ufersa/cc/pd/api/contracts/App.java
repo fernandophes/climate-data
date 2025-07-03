@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public abstract class Executable implements Runnable, Closeable {
+public abstract class App implements Runnable, Closeable {
 
     private InetSocketAddress address;
     private int port;
