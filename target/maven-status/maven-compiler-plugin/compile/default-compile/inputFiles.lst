@@ -1,4 +1,7 @@
-/home/fernandophes/projects/climate-data/src/main/java/br/edu/ufersa/cc/pd/ConnectController.java
-/home/fernandophes/projects/climate-data/src/main/java/br/edu/ufersa/cc/pd/SecondaryController.java
+/home/fernandophes/projects/climate-data/src/main/java/br/edu/ufersa/cc/pd/api/controllers/ConnectController.java
 /home/fernandophes/projects/climate-data/src/main/java/module-info.java
 /home/fernandophes/projects/climate-data/src/main/java/br/edu/ufersa/cc/pd/App.java
+/home/fernandophes/projects/climate-data/src/main/java/br/edu/ufersa/cc/pd/api/apps/Drone.java
+/home/fernandophes/projects/climate-data/src/main/java/br/edu/ufersa/cc/pd/api/controllers/SecondaryController.java
+/home/fernandophes/projects/climate-data/src/main/java/br/edu/ufersa/cc/pd/api/dto/Snapshot.java
+/home/fernandophes/projects/climate-data/src/main/java/br/edu/ufersa/cc/pd/api/contracts/Executable.java

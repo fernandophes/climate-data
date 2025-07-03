@@ -1,4 +1,4 @@
-package br.edu.ufersa.cc.pd;
+package br.edu.ufersa.cc.pd.api.controllers;
 
 import java.io.IOException;
 
@@ -27,7 +27,7 @@ public class ConnectController {
     }
 
     @FXML
-    private void retry() throws IOException {
+    private void connect() throws IOException {
         // LocalizationService.setHost(addressField.getText());
         // LocalizationService.setPort(Integer.parseInt(portField.getText()));
 
