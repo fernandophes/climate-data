@@ -1,6 +1,8 @@
 services:
   drone-norte:
-    image: ghcr.io/fernandophes/climate-data-drone:main
+    build: 
+      context: ./drone
+      dockerfile: Dockerfile
     environment:
       - DRONE_NAME=Norte
       - DRONE_PORT=8081
