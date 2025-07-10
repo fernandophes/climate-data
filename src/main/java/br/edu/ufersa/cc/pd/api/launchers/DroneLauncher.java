@@ -15,6 +15,14 @@ public class DroneLauncher extends Launcher<Drone> {
 
     @Override
     public Drone launch() {
+        try {
+            return launchViaEnv();
+        } catch (Exception e) {
+            return launchViaConsole();
+        }
+    }
+
+    private Drone launchViaConsole() {
         System.out.println("### NOVO DRONE ###");
         final var input = new Scanner(System.in);
 
@@ -31,14 +39,27 @@ public class DroneLauncher extends Launcher<Drone> {
         final var end = input.nextLine();
 
 
-        System.out.println("IP e Porta: ");
-        final var host = Constants.getDefaultHost();
-        System.out.print(host + ":");
+        System.out.println("Porta: ");
         final var port = input.nextInt();
-
+        
         input.close();
+        
+        final var address = new InetSocketAddress(Constants.getDefaultHost(), port);
+        final var format = new Drone.DataFormat(delimiter, start, end);
+        final var drone = new Drone(address, 0, name, format);
+        drone.run();
 
-        final var address = new InetSocketAddress(host, port);
+        return drone;
+    }
+
+    private Drone launchViaEnv() {
+        final var port = Integer.parseInt(System.getenv("DRONE_PORT"));
+        final var name = System.getenv("DRONE_NAME");
+        final var delimiter = System.getenv("DRONE_DELIMITER");
+        final var start = System.getenv("DRONE_START");
+        final var end = System.getenv("DRONE_END");
+
+        final var address = new InetSocketAddress(Constants.getDefaultHost(), port);
         final var format = new Drone.DataFormat(delimiter, start, end);
         final var drone = new Drone(address, 0, name, format);
         drone.run();

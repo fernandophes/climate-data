@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 import br.edu.ufersa.cc.pd.api.contracts.Launcher;
 import br.edu.ufersa.cc.pd.api.launchers.DroneLauncher;
+import br.edu.ufersa.cc.pd.api.utils.Mode;
 
 public class Main {
 
@@ -12,6 +13,17 @@ public class Main {
             new DroneLauncher());
 
     public static void main(String[] args) {
+        try {
+            final var modeName = System.getenv("MODE");
+            final var mode = Mode.valueOf(modeName.toUpperCase());
+
+            mode.getLauncher().launch();
+        } catch (final Exception e) {
+            launchViaConsole();
+        }
+    }
+
+    private static void launchViaConsole() {
         listLaunchers();
 
         final var scanner = new Scanner(System.in);
