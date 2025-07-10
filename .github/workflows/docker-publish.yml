@@ -24,7 +24,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - dockerfile: ./Dockerfile
+          - dockerfile: ./drone/Dockerfile
             image: ghcr.io/fernandophes/climate-data-drone
     permissions:
       contents: read
