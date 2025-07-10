@@ -2,9 +2,8 @@
 services:
   drone-norte:
     build:
-      context: .
+      context: ./drone
       dockerfile: Dockerfile
-    image: climate-data:latest
     environment:
       - DRONE_NAME=Norte
       - DRONE_PORT=8081
@@ -16,9 +15,8 @@ services:
 
   drone-sul:
     build:
-      context: .
+      context: ./drone
       dockerfile: Dockerfile
-    image: climate-data:latest
     environment:
       - DRONE_NAME=Sul
       - DRONE_PORT=8082
@@ -30,9 +28,8 @@ services:
 
   drone-leste:
     build:
-      context: .
+      context: ./drone
       dockerfile: Dockerfile
-    image: climate-data:latest
     environment:
       - DRONE_NAME=Leste
       - DRONE_PORT=8083
@@ -44,9 +41,8 @@ services:
 
   drone-oeste:
     build:
-      context: .
+      context: ./drone
       dockerfile: Dockerfile
-    image: climate-data:latest
     environment:
       - DRONE_NAME=Oeste
       - DRONE_PORT=8084
