@@ -1,9 +1,0 @@
-br/edu/ufersa/cc/pd/api/contracts/Executable.class
-module-info.class
-br/edu/ufersa/cc/pd/api/controllers/SecondaryController.class
-br/edu/ufersa/cc/pd/api/apps/Drone$DataFormat.class
-br/edu/ufersa/cc/pd/api/controllers/ConnectController.class
-br/edu/ufersa/cc/pd/api/apps/Drone.class
-br/edu/ufersa/cc/pd/api/apps/Drone$1.class
-br/edu/ufersa/cc/pd/App.class
-br/edu/ufersa/cc/pd/api/dto/Snapshot.class

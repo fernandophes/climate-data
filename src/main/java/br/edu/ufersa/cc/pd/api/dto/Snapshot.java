@@ -24,9 +24,9 @@ public class Snapshot {
                 getAsList().stream().map(data -> data.toString()).toList());
 
         return new StringBuilder()
-                .append(format.getBefore())
+                .append(format.getStart())
                 .append(inner)
-                .append(format.getAfter())
+                .append(format.getEnd())
                 .toString();
     }
 

@@ -8,7 +8,10 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import br.edu.ufersa.cc.pd.api.contracts.Executable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import br.edu.ufersa.cc.pd.api.contracts.App;
 import br.edu.ufersa.cc.pd.api.dto.Snapshot;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,19 +20,19 @@ import lombok.Getter;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class Drone extends Executable {
+public class Drone extends App {
 
     @Getter
     @AllArgsConstructor
     public static class DataFormat {
         private final String delimiter;
-        private final String before;
-        private final String after;
+        private final String start;
+        private final String end;
 
         public DataFormat(final String delimiter) {
             this.delimiter = delimiter;
-            before = "";
-            after = "";
+            start = "";
+            end = "";
         }
     }
 
@@ -39,6 +42,7 @@ public class Drone extends Executable {
 
     private String name;
     private DataFormat format;
+    private final Logger logger;
 
     private TimerTask subscription;
 
@@ -46,6 +50,8 @@ public class Drone extends Executable {
         super(address, port);
         this.name = name;
         this.format = format;
+
+        logger = LoggerFactory.getLogger("Drone " + name);
     }
 
     @Override
@@ -58,7 +64,7 @@ public class Drone extends Executable {
         subscription = new TimerTask() {
             @Override
             public void run() {
-                System.out.println(capture().format(format));
+                logger.info("Leitura feita: {}", capture().format(format));
             }
         };
 
@@ -69,21 +75,27 @@ public class Drone extends Executable {
     public void close() throws IOException {
         if (isRunning()) {
             subscription.cancel();
+            logger.info("Atividade do drone finalizada", name);
         }
     }
 
     public Snapshot capture() {
-        return new Snapshot(RANDOM.nextDouble(), RANDOM.nextDouble(), RANDOM.nextDouble(), RANDOM.nextDouble());
+        return new Snapshot(simulateValue(), simulateValue(), simulateValue(), simulateValue());
     }
 
     @Override
     public String getDescription() {
-        final var example = new Snapshot(1111.11, 2222.22, 3333.33, 4444.44);
+        final var example = new Snapshot(11.11, 22.22, 33.33, 44.44);
 
         return new StringBuilder()
                 .append("Drone ").append(name)
                 .append(" - Exemplo: ").append(example.format(format))
                 .toString();
+    }
+
+    private double simulateValue() {
+        final var asInt = RANDOM.nextInt(10_000);
+        return asInt / 100d;
     }
 
 }
