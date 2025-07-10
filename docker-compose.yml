@@ -6,7 +6,6 @@ services:
       dockerfile: Dockerfile
     image: climate-data:latest
     environment:
-      - MODE=DRONE
       - DRONE_NAME=Norte
       - DRONE_PORT=8081
       - DRONE_DELIMITER=-
@@ -21,7 +20,6 @@ services:
       dockerfile: Dockerfile
     image: climate-data:latest
     environment:
-      - MODE=DRONE
       - DRONE_NAME=Sul
       - DRONE_PORT=8082
       - DRONE_DELIMITER=;
@@ -36,7 +34,6 @@ services:
       dockerfile: Dockerfile
     image: climate-data:latest
     environment:
-      - MODE=DRONE
       - DRONE_NAME=Leste
       - DRONE_PORT=8083
       - DRONE_DELIMITER=,
@@ -51,7 +48,6 @@ services:
       dockerfile: Dockerfile
     image: climate-data:latest
     environment:
-      - MODE=DRONE
       - DRONE_NAME=Oeste
       - DRONE_PORT=8084
       - DRONE_DELIMITER=#

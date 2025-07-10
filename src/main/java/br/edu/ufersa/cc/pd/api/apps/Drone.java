@@ -22,8 +22,6 @@ import lombok.Getter;
 @EqualsAndHashCode(callSuper = true)
 public class Drone extends App {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Drone.class.getSimpleName());
-
     @Getter
     @AllArgsConstructor
     public static class DataFormat {
@@ -44,6 +42,7 @@ public class Drone extends App {
 
     private String name;
     private DataFormat format;
+    private final Logger logger;
 
     private TimerTask subscription;
 
@@ -51,6 +50,8 @@ public class Drone extends App {
         super(address, port);
         this.name = name;
         this.format = format;
+
+        logger = LoggerFactory.getLogger("Drone " + name);
     }
 
     @Override
@@ -63,7 +64,7 @@ public class Drone extends App {
         subscription = new TimerTask() {
             @Override
             public void run() {
-                LOG.info("Leitura feita: {}", capture().format(format));
+                logger.info("Leitura feita: {}", capture().format(format));
             }
         };
 
@@ -74,6 +75,7 @@ public class Drone extends App {
     public void close() throws IOException {
         if (isRunning()) {
             subscription.cancel();
+            logger.info("Atividade do drone finalizada", name);
         }
     }
 

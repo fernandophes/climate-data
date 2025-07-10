@@ -1,68 +1,75 @@
 package br.edu.ufersa.cc.pd;
 
-import java.util.List;
+import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
-import br.edu.ufersa.cc.pd.api.contracts.Launcher;
-import br.edu.ufersa.cc.pd.api.launchers.DroneLauncher;
-import br.edu.ufersa.cc.pd.api.utils.Mode;
+import br.edu.ufersa.cc.pd.api.apps.Drone;
+import br.edu.ufersa.cc.pd.api.utils.Constants;
 
 public class Main {
 
-    private static final List<Launcher<?>> LAUNCHERS = List.of(
-            new DroneLauncher());
+    private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException, IOException {
+        final var drone = launch();
+        EXECUTOR.submit(drone);
+
+        EXECUTOR.shutdown();
+        EXECUTOR.awaitTermination(1, TimeUnit.MINUTES);
+    }
+
+    private static Drone launch() {
         try {
-            final var modeName = System.getenv("MODE");
-            final var mode = Mode.valueOf(modeName.toUpperCase());
-
-            mode.getLauncher().launch();
-        } catch (final Exception e) {
-            launchViaConsole();
+            return launchViaEnv();
+        } catch (Exception e) {
+            return launchViaConsole();
         }
     }
 
-    private static void launchViaConsole() {
-        listLaunchers();
+    private static Drone launchViaConsole() {
+        System.out.println("### NOVO DRONE ###");
+        final var input = new Scanner(System.in);
 
-        final var scanner = new Scanner(System.in);
+        System.out.print("Nome: ");
+        final var name = input.nextLine().trim();
 
-        var keepRunning = true;
-        do {
-            final var selected = scanner.nextInt();
-            final var index = selected - 1;
+        System.out.print("Separador: ");
+        final var delimiter = input.nextLine();
 
-            try {
-                LAUNCHERS.get(index).launch();
-                keepRunning = false;
-            } catch (final IndexOutOfBoundsException e) {
-                if (selected == 0) {
-                    System.out.println("Saindo...");
-                    keepRunning = false;
-                } else {
-                    System.out.println("A opção " + selected + " não é válida");
-                    System.out.println();
-                    listLaunchers();
-                }
-            }
+        System.out.print("Abertura: ");
+        final var start = input.nextLine();
 
-        } while (keepRunning);
+        System.out.print("Fechamento: ");
+        final var end = input.nextLine();
 
-        scanner.close();
+        System.out.println("Porta: ");
+        final var port = input.nextInt();
+
+        input.close();
+
+        final var address = new InetSocketAddress(Constants.getDefaultHost(), port);
+        final var format = new Drone.DataFormat(delimiter, start, end);
+        final var drone = new Drone(address, 0, name, format);
+
+        return drone;
     }
 
-    private static void listLaunchers() {
-        System.out.println("Qual aplicação você deseja iniciar?");
+    private static Drone launchViaEnv() {
+        final var port = Integer.parseInt(System.getenv("DRONE_PORT"));
+        final var name = System.getenv("DRONE_NAME");
+        final var delimiter = System.getenv("DRONE_DELIMITER");
+        final var start = System.getenv("DRONE_START");
+        final var end = System.getenv("DRONE_END");
 
-        for (var i = 0; i < LAUNCHERS.size(); i++) {
-            final var launcher = LAUNCHERS.get(i);
+        final var address = new InetSocketAddress(Constants.getDefaultHost(), port);
+        final var format = new Drone.DataFormat(delimiter, start, end);
+        final var drone = new Drone(address, 0, name, format);
 
-            System.out.println((i + 1) + ". " + launcher.getName());
-        }
-
-        System.out.println("0. Sair");
-        System.out.println();
+        return drone;
     }
 
 }
