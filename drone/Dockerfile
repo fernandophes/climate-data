@@ -9,6 +9,12 @@ COPY pom.xml .
 COPY src ./src
 COPY default-settings.xml ./settings.xml
 
+ARG GITHUB_USERNAME
+ARG GITHUB_TOKEN
+
+ENV GITHUB_USERNAME $GITHUB_USERNAME
+ENV GITHUB_TOKEN $GITHUB_TOKEN
+
 # Build the application using Maven
 RUN mvn clean package -s settings.xml -DskipTests
 
