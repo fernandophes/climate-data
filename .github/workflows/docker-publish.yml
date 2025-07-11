@@ -66,6 +66,8 @@ jobs:
       - name: Build and push Docker image
         id: build-and-push
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # v5.0.0
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         with:
           context: ./drone
           file: ${{ matrix.dockerfile }}
