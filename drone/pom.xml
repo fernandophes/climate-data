@@ -21,6 +21,13 @@
             <artifactId>lombok</artifactId>
             <version>1.18.36</version>
         </dependency>
+
+        <!-- Dependências do climate-data -->
+        <dependency>
+            <groupId>br.edu.ufersa.cc.pd</groupId>
+            <artifactId>utils</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

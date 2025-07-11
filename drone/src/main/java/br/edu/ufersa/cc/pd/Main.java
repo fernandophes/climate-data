@@ -7,14 +7,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import br.edu.ufersa.cc.pd.api.apps.Drone;
-import br.edu.ufersa.cc.pd.api.utils.Constants;
+import br.edu.ufersa.cc.pd.utils.Constants;
+import br.edu.ufersa.cc.pd.utils.dto.DataFormat;
 
 public class Main {
 
     private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
 
-    public static void main(String[] args) throws InterruptedException, IOException {
+    public static void main(final String[] args) throws InterruptedException, IOException {
         final var drone = launch();
         EXECUTOR.submit(drone);
 
@@ -25,7 +25,7 @@ public class Main {
     private static Drone launch() {
         try {
             return launchViaEnv();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return launchViaConsole();
         }
     }
@@ -52,7 +52,7 @@ public class Main {
         input.close();
 
         final var address = new InetSocketAddress(Constants.getDefaultHost(), port);
-        final var format = new Drone.DataFormat(delimiter, start, end);
+        final var format = new DataFormat(delimiter, start, end);
         final var drone = new Drone(address, 0, name, format);
 
         return drone;
@@ -66,7 +66,7 @@ public class Main {
         final var end = System.getenv("DRONE_END");
 
         final var address = new InetSocketAddress(Constants.getDefaultHost(), port);
-        final var format = new Drone.DataFormat(delimiter, start, end);
+        final var format = new DataFormat(delimiter, start, end);
         final var drone = new Drone(address, 0, name, format);
 
         return drone;

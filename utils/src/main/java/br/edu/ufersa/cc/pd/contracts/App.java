@@ -1,4 +1,4 @@
-package br.edu.ufersa.cc.pd.api.contracts;
+package br.edu.ufersa.cc.pd.contracts;
 
 import java.io.Closeable;
 import java.net.InetSocketAddress;
