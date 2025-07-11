@@ -1,4 +1,4 @@
-package br.edu.ufersa.cc.pd.api.apps;
+package br.edu.ufersa.cc.pd;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -11,30 +11,15 @@ import java.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import br.edu.ufersa.cc.pd.api.contracts.App;
-import br.edu.ufersa.cc.pd.api.dto.Snapshot;
-import lombok.AllArgsConstructor;
+import br.edu.ufersa.cc.pd.utils.contracts.App;
+import br.edu.ufersa.cc.pd.utils.dto.DataFormat;
+import br.edu.ufersa.cc.pd.utils.dto.Snapshot;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class Drone extends App {
-
-    @Getter
-    @AllArgsConstructor
-    public static class DataFormat {
-        private final String delimiter;
-        private final String start;
-        private final String end;
-
-        public DataFormat(final String delimiter) {
-            this.delimiter = delimiter;
-            start = "";
-            end = "";
-        }
-    }
 
     private static final long INTERVAL = 3_000;
     private static final Random RANDOM = new Random();

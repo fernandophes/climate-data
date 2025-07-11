@@ -7,9 +7,10 @@ WORKDIR /app
 # Copy the pom.xml and the project files to the container
 COPY pom.xml .
 COPY src ./src
+COPY default-settings.xml ./settings.xml
 
 # Build the application using Maven
-RUN mvn clean package -DskipTests
+RUN mvn clean package -s settings.xml -DskipTests
 
 # Use an official OpenJDK image as the base image
 FROM eclipse-temurin:21-jre
