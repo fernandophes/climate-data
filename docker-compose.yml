@@ -1,16 +1,17 @@
 services:
   drone-norte:
-    build: 
+    build:
       context: ./drone
       dockerfile: Dockerfile
+      args:
+        - GITHUB_USERNAME=${GITHUB_USERNAME-nope}
+        - GITHUB_TOKEN=${GITHUB_TOKEN}
     environment:
       - DRONE_NAME=Norte
       - DRONE_PORT=8081
       - DRONE_DELIMITER=-
       - DRONE_START=
       - DRONE_END=
-      # - GITHUB_USERNAME=
-      # - GITHUB_TOKEN=
     ports:
       - "8081:8080"
 

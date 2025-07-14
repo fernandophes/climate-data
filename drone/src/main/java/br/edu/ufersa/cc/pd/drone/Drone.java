@@ -1,4 +1,4 @@
-package br.edu.ufersa.cc.pd;
+package br.edu.ufersa.cc.pd.drone;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -8,6 +8,7 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import br.edu.ufersa.cc.pd.mqtt.MqttConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,10 +25,13 @@ public class Drone extends App {
     private static final long INTERVAL = 3_000;
     private static final Random RANDOM = new Random();
     private static final Timer TIMER = new Timer();
+    private String EXCHANGE = "drones";
+    private String EXCHANGE_TYPE = "fanout";
 
     private String name;
     private DataFormat format;
     private final Logger logger;
+    private final MqttConnection mqttConnection;
 
     private TimerTask subscription;
 
@@ -37,6 +41,7 @@ public class Drone extends App {
         this.format = format;
 
         logger = LoggerFactory.getLogger("Drone " + name);
+        this.mqttConnection = new MqttConnection<String>(this.EXCHANGE, this.EXCHANGE_TYPE);
     }
 
     @Override
@@ -49,6 +54,7 @@ public class Drone extends App {
         subscription = new TimerTask() {
             @Override
             public void run() {
+                mqttConnection.sendMessage(capture().format(format));
                 logger.info("Leitura feita: {}", capture().format(format));
             }
         };

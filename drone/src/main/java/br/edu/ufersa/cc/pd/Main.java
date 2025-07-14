@@ -7,6 +7,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import br.edu.ufersa.cc.pd.drone.Drone;
+import br.edu.ufersa.cc.pd.envLoader.EnvLoader;
 import br.edu.ufersa.cc.pd.utils.Constants;
 import br.edu.ufersa.cc.pd.utils.dto.DataFormat;
 
@@ -59,11 +61,11 @@ public class Main {
     }
 
     private static Drone launchViaEnv() {
-        final var port = Integer.parseInt(System.getenv("DRONE_PORT"));
-        final var name = System.getenv("DRONE_NAME");
-        final var delimiter = System.getenv("DRONE_DELIMITER");
-        final var start = System.getenv("DRONE_START");
-        final var end = System.getenv("DRONE_END");
+        final var port = Integer.parseInt(EnvLoader.getEnv("DRONE_PORT"));
+        final var name = EnvLoader.getEnv("DRONE_NAME");
+        final var delimiter = EnvLoader.getEnv("DRONE_DELIMITER");
+        final var start = EnvLoader.getEnv("DRONE_START");
+        final var end = EnvLoader.getEnv("DRONE_END");
 
         final var address = new InetSocketAddress(Constants.getDefaultHost(), port);
         final var format = new DataFormat(delimiter, start, end);
