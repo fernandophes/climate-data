@@ -4,6 +4,7 @@ import br.edu.ufersa.cc.pd.envLoader.EnvLoader;
 import br.edu.ufersa.cc.pd.mq.MqConnection;
 import br.edu.ufersa.cc.pd.mq.MqProducer;
 import com.rabbitmq.client.Channel;
+import com.google.gson.JsonObject;
 
 public class MqttConnection<T> {
     private final String HOST = EnvLoader.getEnv("MQTT_HOST");
@@ -25,8 +26,18 @@ public class MqttConnection<T> {
         this.channel = this.connection.createConnection();
     }
 
-    public void sendMessage(T message) {
+    public void sendMessage(T message, String droneName) {
         MqProducer<T> producer = new MqProducer<>(this.channel, ROUTING_KEY, EXCHANGE, "UTF-8");
-        producer.send(message);
+        JsonObject messagePrepared = prepareMessage(message, droneName);
+        producer.send((T) messagePrepared);
+    }
+
+    public JsonObject prepareMessage(T message, String droneName) {
+        final var jsonObject = new JsonObject();
+        jsonObject.addProperty("operation", "process_data");
+        jsonObject.addProperty("drone", droneName);
+        jsonObject.addProperty("data", message.toString());
+
+        return jsonObject;
     }
 }

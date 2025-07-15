@@ -12,6 +12,8 @@ public interface IMqProducer<T> {
      */
     void send(T message);
 
+    void close() throws IOException, TimeoutException;
+
     /**
      * Closes the producer, releasing any resources it holds.
      */

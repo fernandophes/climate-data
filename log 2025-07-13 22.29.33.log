@@ -1,0 +1,6 @@
+2025-07-13 22:29:34 [main] DEBUG com.rabbitmq.client.impl.ConsumerWorkService - Creating executor service with 8 thread(s) for consumer work service
+2025-07-13 22:29:34 [Timer-0] INFO  Drone norte - Leitura feita: (86.33-74.33-91.41-86.33)
+2025-07-13 22:29:37 [Timer-0] INFO  Drone norte - Leitura feita: (84.81-4.24-16.63-84.81)
+2025-07-13 22:29:40 [Timer-0] INFO  Drone norte - Leitura feita: (87.42-17.5-99.74-87.42)
+2025-07-13 22:29:43 [Timer-0] INFO  Drone norte - Leitura feita: (73.9-32.04-2.44-73.9)
+2025-07-13 22:29:46 [Timer-0] INFO  Drone norte - Leitura feita: (91.04-52.73-33.93-91.04)

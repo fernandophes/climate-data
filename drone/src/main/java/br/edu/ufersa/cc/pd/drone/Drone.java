@@ -54,7 +54,7 @@ public class Drone extends App {
         subscription = new TimerTask() {
             @Override
             public void run() {
-                mqttConnection.sendMessage(capture().format(format));
+                mqttConnection.sendMessage(capture().format(format), name);
                 logger.info("Leitura feita: {}", capture().format(format));
             }
         };
