@@ -15,7 +15,7 @@ public class Main {
 
     public static void main(final String[] args) {
         LOG.info("Iniciando Gateway...");
-        final var mqConsumerFromDrones = new GatewayConnection("drones", "fanout", "", "UTF-8");
+        final var mqConsumerFromDrones = new GatewayConnection("climate_data.send", "drones", "fanout", "", "UTF-8");
         mqConsumerFromDrones.createConnection();
 
         final var port = Integer.parseInt(System.getenv("GATEWAY_PORT"));

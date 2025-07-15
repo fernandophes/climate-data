@@ -47,7 +47,6 @@ public class RabbitMqConnection<T> implements MqConnection<T> {
             connection = factory.newConnection();
             channel = connection.createChannel();
             channel.exchangeDeclare(exchange, exchangeType, true);
-            channel.queueBind(queue, exchange, routingKey);
         } catch (final IOException | TimeoutException e) {
             throw new MqConnectionException("Failed to create MQ connection", e);
         }
