@@ -24,7 +24,7 @@
 	"postCreateCommand": "mkdir /home/vscode/.m2; cp /workspaces/climate-data/default-settings.xml /home/vscode/.m2/settings.xml",
 	// "waitFor": "postCreateCommand",
 	"runArgs": ["--env-file", "./.env"],
-	"appPort": "8070:8080",
+	"appPort": "8071:8080",
 	"customizations": {
 		"vscode": {
 			"extensions": [
