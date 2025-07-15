@@ -1,34 +1,24 @@
-// package br.edu.ufersa.cc.pd;
+package br.edu.ufersa.cc.pd;
 
-// import br.edu.ufersa.cc.pd.api.envLoader.EnvLoader;
-// import br.edu.ufersa.cc.pd.api.gateway.Gateway;
-// import br.edu.ufersa.cc.pd.utils.Constants;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
-// import java.io.IOException;
-// import java.net.InetSocketAddress;
-// import java.util.concurrent.ExecutorService;
-// import java.util.concurrent.Executors;
-// import java.util.concurrent.TimeUnit;
+import br.edu.ufersa.cc.pd.gateway.Gateway;
 
-// public class Main {
+public class Main {
 
-//     private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
+    private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
 
-//     public static void main(final String[] args) throws InterruptedException, IOException {
-//         final var gateway = launchViaEnv();
-//         EXECUTOR.submit(gateway);
+    public static void main(final String[] args) throws InterruptedException {
+        final var mqConsumerFromDrones = new GatewayConnection(null, null, null, null);
 
-//         EXECUTOR.shutdown();
-//         EXECUTOR.awaitTermination(1, TimeUnit.MINUTES);
-//     }
+        final var port = Integer.parseInt(System.getenv("GATEWAY_PORT"));
+        final var gateway = new Gateway(port, mqConsumerFromDrones);
+        EXECUTOR.submit(gateway);
 
-//     private static Gateway launchViaEnv() {
-//         final var port = Integer.parseInt(EnvLoader.getEnv("GATEWAY_PORT"));
+        EXECUTOR.shutdown();
+        EXECUTOR.awaitTermination(1, TimeUnit.MINUTES);
+    }
 
-//         final var address = new InetSocketAddress(Constants.getDefaultHost(), port);
-//         final var gateway = new Gateway(address, port);
-
-//         return gateway;
-//     }
-
-// }
+}

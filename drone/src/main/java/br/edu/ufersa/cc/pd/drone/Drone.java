@@ -31,7 +31,7 @@ public class Drone extends App {
     private String name;
     private DataFormat format;
     private final Logger logger;
-    private final List<Consumer<Snapshot>> callbacks = new ArrayList<>();
+    private final List<Consumer<String>> callbacks = new ArrayList<>();
 
     private TimerTask subscription;
 
@@ -57,7 +57,7 @@ public class Drone extends App {
                 final var formatted = snapshot.format(format);
 
                 logger.info("Leitura feita: {}", formatted);
-                callbacks.forEach(callback -> callback.accept(snapshot));
+                callbacks.forEach(callback -> callback.accept(formatted));
             }
         };
 
@@ -72,11 +72,11 @@ public class Drone extends App {
         }
     }
 
-    public void subscribe(final Consumer<Snapshot> callback) {
+    public void subscribe(final Consumer<String> callback) {
         callbacks.add(callback);
     }
 
-    public void unsubscribe(final Consumer<Snapshot> callback) {
+    public void unsubscribe(final Consumer<String> callback) {
         callbacks.remove(callback);
     }
 
