@@ -28,7 +28,8 @@ public class Main {
         final var drone = launch();
         EXECUTOR.submit(drone);
 
-        final var mqConnection = new DroneConnection("drones", "fanout", "ok", "UTF-8");
+        final var mqConnection = new DroneConnection("drones", "fanout", "", "UTF-8");
+        mqConnection.createConnection();
         drone.subscribe(mqConnection::send);
 
         EXECUTOR.shutdown();

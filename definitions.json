@@ -35,5 +35,14 @@
             "internal": false,
             "arguments": {}
         }
+    ],
+    "permissions": [
+        {
+            "user": "drones",
+            "vhost": "/",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
+        }
     ]
 }

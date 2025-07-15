@@ -25,6 +25,9 @@
 	// "waitFor": "postCreateCommand",
 	"runArgs": ["--env-file", "./.env"],
 	"appPort": "8070:8080",
+	"forwardPorts": [
+		5672
+	],
 	"customizations": {
 		"vscode": {
 			"extensions": [
