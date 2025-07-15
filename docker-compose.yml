@@ -1,55 +1,96 @@
 services:
+
+  rabbitmq:
+    image: rabbitmq:latest
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: drones
+      RABBITMQ_DEFAULT_PASS: 123456
+    configs:
+      - source: rabbitmq-plugins
+        target: /etc/rabbitmq/enabled_plugins
+    volumes:
+      - rabbitmq-lib:/var/lib/rabbitmq/
+      - rabbitmq-log:/var/log/rabbitmq
+
   drone-norte:
-    build:
-      context: ./drone
-      dockerfile: Dockerfile
-      args:
-        - GITHUB_USERNAME=${GITHUB_USERNAME}
-        - GITHUB_TOKEN=${GITHUB_TOKEN}
+    image: ghcr.io/fernandophes/climate-data-drone:main
+    depends_on:
+      - rabbitmq
     environment:
       - DRONE_NAME=Norte
       - DRONE_PORT=8081
       - DRONE_DELIMITER=-
       - DRONE_START=
       - DRONE_END=
+      - MQ_HOST=rabbitmq
+      - MQ_PORT=5672
+      - MQ_USERNAME=drones
+      - MQ_PASSWORD=123456
     ports:
       - "8081:8080"
 
   drone-sul:
     image: ghcr.io/fernandophes/climate-data-drone:main
+    depends_on:
+      - rabbitmq
     environment:
       - DRONE_NAME=Sul
       - DRONE_PORT=8082
       - DRONE_DELIMITER=;
       - DRONE_START=(
       - DRONE_END=)
-      - GITHUB_USERNAME=
-      - GITHUB_TOKEN=
+      - MQ_HOST=rabbitmq
+      - MQ_PORT=5672
+      - MQ_USERNAME=drones
+      - MQ_PASSWORD=123456
     ports:
       - "8082:8080"
 
   drone-leste:
     image: ghcr.io/fernandophes/climate-data-drone:main
+    depends_on:
+      - rabbitmq
     environment:
       - DRONE_NAME=Leste
       - DRONE_PORT=8083
       - DRONE_DELIMITER=,
       - DRONE_START={
       - DRONE_END=}
-      - GITHUB_USERNAME=
-      - GITHUB_TOKEN=
+      - MQ_HOST=rabbitmq
+      - MQ_PORT=5672
+      - MQ_USERNAME=drones
+      - MQ_PASSWORD=123456
     ports:
       - "8083:8080"
 
   drone-oeste:
     image: ghcr.io/fernandophes/climate-data-drone:main
+    depends_on:
+      - rabbitmq
     environment:
       - DRONE_NAME=Oeste
       - DRONE_PORT=8084
       - DRONE_DELIMITER=#
       - DRONE_START=
       - DRONE_END=
-      - GITHUB_USERNAME=
-      - GITHUB_TOKEN=
+      - MQ_HOST=rabbitmq
+      - MQ_PORT=5672
+      - MQ_USERNAME=drones
+      - MQ_PASSWORD=123456
     ports:
       - "8084:8080"
+
+configs:
+  rabbitmq-plugins:
+    content: "[rabbitmq_management]."  
+
+volumes:
+  rabbitmq-lib:
+    driver: local
+  rabbitmq-log:
+    driver: local

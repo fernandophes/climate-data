@@ -3,12 +3,14 @@ package br.edu.ufersa.cc.pd.drone;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.function.Consumer;
 
-import br.edu.ufersa.cc.pd.mqtt.MqttConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,13 +27,11 @@ public class Drone extends App {
     private static final long INTERVAL = 3_000;
     private static final Random RANDOM = new Random();
     private static final Timer TIMER = new Timer();
-    private String EXCHANGE = "drones";
-    private String EXCHANGE_TYPE = "fanout";
 
     private String name;
     private DataFormat format;
     private final Logger logger;
-    private final MqttConnection mqttConnection;
+    private final List<Consumer<Snapshot>> callbacks = new ArrayList<>();
 
     private TimerTask subscription;
 
@@ -41,7 +41,6 @@ public class Drone extends App {
         this.format = format;
 
         logger = LoggerFactory.getLogger("Drone " + name);
-        this.mqttConnection = new MqttConnection<String>(this.EXCHANGE, this.EXCHANGE_TYPE);
     }
 
     @Override
@@ -54,8 +53,11 @@ public class Drone extends App {
         subscription = new TimerTask() {
             @Override
             public void run() {
-                mqttConnection.sendMessage(capture().format(format), name);
-                logger.info("Leitura feita: {}", capture().format(format));
+                final var snapshot = capture();
+                final var formatted = snapshot.format(format);
+
+                logger.info("Leitura feita: {}", formatted);
+                callbacks.forEach(callback -> callback.accept(snapshot));
             }
         };
 
@@ -66,12 +68,16 @@ public class Drone extends App {
     public void close() throws IOException {
         if (isRunning()) {
             subscription.cancel();
-            logger.info("Atividade do drone finalizada", name);
+            logger.info("Atividade do drone {} finalizada", name);
         }
     }
 
-    public Snapshot capture() {
-        return new Snapshot(simulateValue(), simulateValue(), simulateValue(), simulateValue());
+    public void subscribe(final Consumer<Snapshot> callback) {
+        callbacks.add(callback);
+    }
+
+    public void unsubscribe(final Consumer<Snapshot> callback) {
+        callbacks.remove(callback);
     }
 
     @Override
@@ -82,6 +88,10 @@ public class Drone extends App {
                 .append("Drone ").append(name)
                 .append(" - Exemplo: ").append(example.format(format))
                 .toString();
+    }
+
+    private Snapshot capture() {
+        return new Snapshot(simulateValue(), simulateValue(), simulateValue(), simulateValue());
     }
 
     private double simulateValue() {
