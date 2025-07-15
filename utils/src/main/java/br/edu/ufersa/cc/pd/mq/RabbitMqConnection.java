@@ -49,11 +49,12 @@ public class RabbitMqConnection<T> implements MqConnection<T> {
         } catch (final IOException | TimeoutException e) {
             throw new MqConnectionException("Failed to create MQ connection", e);
         }
-
     }
 
     @Override
     public T receive() {
+        turnOn();
+
         try {
             final var messageAsString = channel.basicConsume(routingKey, true,
                     (consumerTag, entrega) -> new String(entrega.getBody(), dataModel),
@@ -68,6 +69,8 @@ public class RabbitMqConnection<T> implements MqConnection<T> {
 
     @Override
     public void send(final T message) {
+        turnOn();
+
         try {
             final var messageBytes = message.toString().getBytes(this.dataModel);
 
@@ -87,6 +90,12 @@ public class RabbitMqConnection<T> implements MqConnection<T> {
         }
 
         connection.close();
+    }
+
+    private void turnOn() {
+        if (channel == null) {
+            createConnection();
+        }
     }
 
     private void configureFactory(final ConnectionFactory factory) {

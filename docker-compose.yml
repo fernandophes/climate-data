@@ -1,8 +1,7 @@
 services:
 
   rabbitmq:
-    image: rabbitmq:latest
-    container_name: rabbitmq
+    image: rabbitmq:3-management
     restart: always
     ports:
       - 5672:5672
@@ -16,9 +15,16 @@ services:
     volumes:
       - rabbitmq-lib:/var/lib/rabbitmq/
       - rabbitmq-log:/var/log/rabbitmq
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./definitions.json:/etc/rabbitmq/definitions.json:ro
 
   drone-norte:
-    image: ghcr.io/fernandophes/climate-data-drone:main
+    build:
+      context: ./drone
+      dockerfile: Dockerfile
+      args:
+        - GITHUB_USERNAME=${GITHUB_USERNAME}
+        - GITHUB_TOKEN=${GITHUB_TOKEN}
     depends_on:
       - rabbitmq
     environment:

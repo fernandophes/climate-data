@@ -24,10 +24,11 @@ public class Main {
     private static final Timer TIMER = new Timer();
 
     public static void main(final String[] args) throws InterruptedException {
+        LOG.info("Iniciando drone ...");
         final var drone = launch();
         EXECUTOR.submit(drone);
 
-        final var mqConnection = new DroneConnection("drones", "fanout", null, null);
+        final var mqConnection = new DroneConnection("drones", "fanout", "ok", "UTF-8");
         drone.subscribe(mqConnection::send);
 
         EXECUTOR.shutdown();
@@ -72,7 +73,7 @@ public class Main {
         System.out.print("Fechamento: ");
         final var end = input.nextLine();
 
-        System.out.println("Porta: ");
+        System.out.print("Porta: ");
         final var port = input.nextInt();
 
         input.close();
