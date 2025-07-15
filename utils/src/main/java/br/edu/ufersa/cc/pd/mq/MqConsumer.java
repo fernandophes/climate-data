@@ -6,6 +6,7 @@ import com.rabbitmq.client.DeliverCallback;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 
 public class MqConsumer<T> implements IMqConsumer<T> {
     // Talvez precise adicionar o nome da fila por aqui
@@ -13,17 +14,18 @@ public class MqConsumer<T> implements IMqConsumer<T> {
     private final String routing_key;
     private final String data_model;
 
-    public MqConsumer(Channel channel, String routing_key, String data_model) {
+    public MqConsumer(Channel channel, String routing_key, String data_model, String s) {
         this.channel = channel;
         this.routing_key = routing_key;
         this.data_model = data_model;
     }
 
     @Override
-    public String receive() {
+    public String receive(Consumer<String> processData) {
         try {
-            DeliverCallback deliverCallback = (consumerTag, entrega) -> {
-                new String(entrega.getBody(), data_model);
+            DeliverCallback deliverCallback = (consumerTag, deliver) -> {
+                String mensagem = new String(deliver.getBody(), "UTF-8");
+                processData.accept(mensagem);
             };
             return channel.basicConsume(routing_key, true, deliverCallback, consumerTag -> { });
         } catch (IOException e) {
