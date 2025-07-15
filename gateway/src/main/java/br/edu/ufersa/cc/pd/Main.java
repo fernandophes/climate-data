@@ -4,14 +4,20 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import br.edu.ufersa.cc.pd.gateway.Gateway;
 
 public class Main {
 
+    private static final Logger LOG = LoggerFactory.getLogger(Main.class.getSimpleName());
     private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
 
     public static void main(final String[] args) throws InterruptedException {
-        final var mqConsumerFromDrones = new GatewayConnection(null, null, null, null);
+        LOG.info("Iniciando Gateway...");
+        final var mqConsumerFromDrones = new GatewayConnection("drones", "fanout", "climate_data.send", "UTF-8");
+        mqConsumerFromDrones.createConnection();
 
         final var port = Integer.parseInt(System.getenv("GATEWAY_PORT"));
         final var gateway = new Gateway(port, mqConsumerFromDrones);

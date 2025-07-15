@@ -88,6 +88,24 @@ services:
     ports:
       - "8084:8080"
 
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+      args:
+        - GITHUB_USERNAME=${GITHUB_USERNAME}
+        - GITHUB_TOKEN=${GITHUB_TOKEN}
+    depends_on:
+      - rabbitmq
+    environment:
+      - GATEWAY_PORT=8091
+      - MQ_HOST=rabbitmq
+      - MQ_PORT=5672
+      - MQ_USERNAME=drones
+      - MQ_PASSWORD=123456
+    ports:
+      - "8091:8080"
+
 configs:
   rabbitmq-plugins:
     content: "[rabbitmq_management]." 
