@@ -14,8 +14,11 @@ import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.Gson;
+
 import br.edu.ufersa.cc.pd.utils.contracts.App;
 import br.edu.ufersa.cc.pd.utils.dto.DataFormat;
+import br.edu.ufersa.cc.pd.utils.dto.DroneMessage;
 import br.edu.ufersa.cc.pd.utils.dto.Snapshot;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -27,6 +30,7 @@ public class Drone extends App {
     private static final long INTERVAL = 3_000;
     private static final Random RANDOM = new Random();
     private static final Timer TIMER = new Timer();
+    private static final Gson GSON = new Gson();
 
     private String name;
     private DataFormat format;
@@ -55,9 +59,16 @@ public class Drone extends App {
             public void run() {
                 final var snapshot = capture();
                 final var formatted = snapshot.format(format);
-
                 logger.info("Leitura feita: {}", formatted);
-                callbacks.forEach(callback -> callback.accept(formatted));
+
+                final var message = new DroneMessage();
+                message.setDroneName(name);
+                message.setDataFormat(format);
+                message.setMessage(formatted);
+
+                final var json = GSON.toJson(message);
+
+                callbacks.forEach(callback -> callback.accept(json));
             }
         };
 

@@ -30,7 +30,10 @@ public class Main {
 
         final var mqConnection = new DroneConnection("drones", "fanout", "climate_data.send", "UTF-8");
         mqConnection.createConnection();
-        drone.subscribe(mqConnection::send);
+        drone.subscribe(message -> {
+            LOG.info("Enviando mensagem... {}", message);
+            mqConnection.send(message);
+        });
 
         EXECUTOR.shutdown();
         EXECUTOR.awaitTermination(3, TimeUnit.MINUTES);
