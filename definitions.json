@@ -14,17 +14,6 @@
             "name": "/"
         }
     ],
-    "queues": [
-        {
-            "name": "drones",
-            "vhost": "/",
-            "durable": true,
-            "auto_delete": false,
-            "arguments": {
-                "x-queue-type": "classic"
-            }
-        }
-    ],
     "exchanges": [
         {
             "name": "drones",

@@ -24,11 +24,11 @@ public class Main {
     private static final Timer TIMER = new Timer();
 
     public static void main(final String[] args) throws InterruptedException {
-        LOG.info("Iniciando drone ...");
+        LOG.info("Iniciando drone...");
         final var drone = launch();
         EXECUTOR.submit(drone);
 
-        final var mqConnection = new DroneConnection("drones", "fanout", "", "UTF-8");
+        final var mqConnection = new DroneConnection("drones", "fanout", "climate_data.send", "UTF-8");
         mqConnection.createConnection();
         drone.subscribe(mqConnection::send);
 

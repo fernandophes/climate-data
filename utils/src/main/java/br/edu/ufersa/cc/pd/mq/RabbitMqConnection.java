@@ -72,9 +72,9 @@ public class RabbitMqConnection<T> implements MqConnection<T> {
         turnOn();
 
         try {
-            final var messageBytes = message.toString().getBytes(this.dataModel);
+            final var messageBytes = message.toString().getBytes(dataModel);
 
-            channel.basicPublish(this.exchange, this.routingKey, null, messageBytes);
+            channel.basicPublish(exchange, routingKey, null, messageBytes);
             LOG.info("Message sent: {}", message);
         } catch (final Exception e) {
             throw new MqProducerException("Failed to send message", e);

@@ -6,9 +6,6 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
-    environment:
-      RABBITMQ_DEFAULT_USER: drones
-      RABBITMQ_DEFAULT_PASS: 123456
     configs:
       - source: rabbitmq-plugins
         target: /etc/rabbitmq/enabled_plugins
@@ -93,7 +90,7 @@ services:
 
 configs:
   rabbitmq-plugins:
-    content: "[rabbitmq_management]."  
+    content: "[rabbitmq_management]." 
 
 volumes:
   rabbitmq-lib:
