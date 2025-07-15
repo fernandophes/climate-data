@@ -6,6 +6,7 @@ import java.util.concurrent.TimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -21,8 +22,10 @@ import lombok.RequiredArgsConstructor;
 public class RabbitMqConnection<T> implements MqConnection<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RabbitMqConnection.class.getSimpleName());
+    private static final Gson GSON = new Gson();
 
     private final MqConnectionData data;
+    private final Class<T> messageType;
     private final String exchange;
     private final String exchangeType;
     private final String routingKey;
@@ -51,8 +54,16 @@ public class RabbitMqConnection<T> implements MqConnection<T> {
 
     @Override
     public T receive() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'receive'");
+        try {
+            final var messageAsString = channel.basicConsume(routingKey, true,
+                    (consumerTag, entrega) -> new String(entrega.getBody(), dataModel),
+                    consumerTag -> {
+                    });
+
+            return GSON.fromJson(messageAsString, messageType);
+        } catch (final IOException e) {
+            throw new MqConnectionException(e);
+        }
     }
 
     @Override
