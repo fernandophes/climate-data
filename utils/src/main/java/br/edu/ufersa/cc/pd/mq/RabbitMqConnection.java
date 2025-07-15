@@ -26,6 +26,7 @@ public class RabbitMqConnection<T> implements MqConnection<T> {
 
     private final MqConnectionData data;
     private final Class<T> messageType;
+    private final String queue;
     private final String exchange;
     private final String exchangeType;
     private final String routingKey;
@@ -46,6 +47,7 @@ public class RabbitMqConnection<T> implements MqConnection<T> {
             connection = factory.newConnection();
             channel = connection.createChannel();
             channel.exchangeDeclare(exchange, exchangeType, true);
+            channel.queueBind(queue, exchange, routingKey);
         } catch (final IOException | TimeoutException e) {
             throw new MqConnectionException("Failed to create MQ connection", e);
         }
@@ -54,7 +56,7 @@ public class RabbitMqConnection<T> implements MqConnection<T> {
     @Override
     public T receive() {
         try {
-            final var messageAsString = channel.basicConsume(exchange + "." + routingKey, true,
+            final var messageAsString = channel.basicConsume(queue, true,
                     (consumerTag, entrega) -> new String(entrega.getBody(), dataModel),
                     consumerTag -> {
                     });
