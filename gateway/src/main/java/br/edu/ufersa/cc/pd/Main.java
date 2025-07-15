@@ -16,15 +16,15 @@ public class Main {
 
     public static void main(final String[] args) throws InterruptedException {
         LOG.info("Iniciando Gateway...");
-        final var mqConsumerFromDrones = new GatewayConnection("drones", "fanout", "climate_data.send", "UTF-8");
+        final var mqConsumerFromDrones = new GatewayConnection("drones", "fanout", "", "UTF-8");
         mqConsumerFromDrones.createConnection();
 
         final var port = Integer.parseInt(System.getenv("GATEWAY_PORT"));
         final var gateway = new Gateway(port, mqConsumerFromDrones);
         EXECUTOR.submit(gateway);
 
-        EXECUTOR.shutdown();
-        EXECUTOR.awaitTermination(1, TimeUnit.MINUTES);
+        // EXECUTOR.shutdown();
+        // EXECUTOR.awaitTermination(1, TimeUnit.MINUTES);
     }
 
 }

@@ -44,5 +44,15 @@
             "write": ".*",
             "read": ".*"
         }
+    ],
+    "bindings": [
+        {
+            "source": "drones",
+            "destination": "climate_data.send",
+            "destination_type": "queue",
+            "vhost": "/",
+            "routing_key": "",
+            "arguments": {}
+        }
     ]
 }

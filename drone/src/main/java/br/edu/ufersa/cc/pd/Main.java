@@ -28,7 +28,7 @@ public class Main {
         final var drone = launch();
         EXECUTOR.submit(drone);
 
-        final var mqConnection = new DroneConnection("drones", "fanout", "climate_data.send", "UTF-8");
+        final var mqConnection = new DroneConnection("drones", "fanout", "", "UTF-8");
         mqConnection.createConnection();
         drone.subscribe(message -> {
             LOG.info("Enviando mensagem... {}", message);
