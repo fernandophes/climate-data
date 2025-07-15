@@ -51,6 +51,8 @@ jobs:
         include:
           - dockerfile: ./drone/Dockerfile
             image: ghcr.io/fernandophes/climate-data-drone
+          - dockerfile: ./gateway/Dockerfile
+            image: ghcr.io/fernandophes/climate-data-gateway
     permissions:
       contents: read
       packages: write
