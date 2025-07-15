@@ -40,9 +40,10 @@ public class Gateway extends App {
         saveDataInDatabase(message);
     }
 
-    private void saveDataInDatabase(final JsonObject data) {
-        final var climateData = data.get("data").getAsString();
-        final var region = data.get("drone").getAsString();
+    private void saveDataInDatabase(final DroneMessage message) {
+        final var climateData = message.getMessage();
+        final var region = message.getDroneName();
+        final var format = message.getDataFormat();
 
         final var originalData = List.of(climateData.replace("[", "").replace("]", "").split(", "));
 
@@ -59,12 +60,13 @@ public class Gateway extends App {
     public void run() {
         LOG.info("Running Gateway");
         running = true;
-        while (running) {
+
+        while (isRunning()) {
             LOG.info("Running Gateway LOOP");
             final var json = consumer.receive();
-            final var message = GSON.fromJson(json, DroneMessage.class);
-
             LOG.info("Mensagem lida: {}", json);
+
+            final var message = GSON.fromJson(json, DroneMessage.class);
         }
     }
 
