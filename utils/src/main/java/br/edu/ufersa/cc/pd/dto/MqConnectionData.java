@@ -1,11 +1,13 @@
 package br.edu.ufersa.cc.pd.dto;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class MqConnectionData {
+public class MqConnectionData implements Serializable {
 
     private final String host;
     private final int port;

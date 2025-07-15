@@ -1,5 +1,6 @@
 package br.edu.ufersa.cc.pd.utils.dto;
 
+import java.io.Serializable;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -7,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class Snapshot {
+public class Snapshot implements Serializable {
 
     private final double pressure;
     private final double radiation;
