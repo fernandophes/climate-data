@@ -16,7 +16,7 @@ ENV GITHUB_USERNAME $GITHUB_USERNAME
 ENV GITHUB_TOKEN $GITHUB_TOKEN
 
 # Build the application using Maven
-RUN mvn clean package -s settings.xml -DskipTests
+RUN mvn package -s settings.xml -DskipTests
 
 # Use an official OpenJDK image as the base image
 FROM eclipse-temurin:21-jre
