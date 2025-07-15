@@ -53,10 +53,8 @@ public class RabbitMqConnection<T> implements MqConnection<T> {
 
     @Override
     public T receive() {
-        turnOn();
-
         try {
-            final var messageAsString = channel.basicConsume(routingKey, true,
+            final var messageAsString = channel.basicConsume(exchange + "." + routingKey, true,
                     (consumerTag, entrega) -> new String(entrega.getBody(), dataModel),
                     consumerTag -> {
                     });
@@ -69,8 +67,6 @@ public class RabbitMqConnection<T> implements MqConnection<T> {
 
     @Override
     public void send(final T message) {
-        turnOn();
-
         try {
             final var messageBytes = message.toString().getBytes(dataModel);
 
@@ -90,12 +86,6 @@ public class RabbitMqConnection<T> implements MqConnection<T> {
         }
 
         connection.close();
-    }
-
-    private void turnOn() {
-        if (channel == null) {
-            createConnection();
-        }
     }
 
     private void configureFactory(final ConnectionFactory factory) {
