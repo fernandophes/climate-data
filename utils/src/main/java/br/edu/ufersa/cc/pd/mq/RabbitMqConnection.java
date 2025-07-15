@@ -55,10 +55,8 @@ public class RabbitMqConnection<T> implements MqConnection<T> {
     @Override
     public T receive() {
         try {
-            final var messageAsString = channel.basicConsume(queue, true,
-                    (consumerTag, entrega) -> new String(entrega.getBody(), dataModel),
-                    consumerTag -> {
-                    });
+            final var response = channel.basicGet(queue, true);
+            final var messageAsString = new String(response.getBody());
 
             return GSON.fromJson(messageAsString, messageType);
         } catch (final IOException e) {
