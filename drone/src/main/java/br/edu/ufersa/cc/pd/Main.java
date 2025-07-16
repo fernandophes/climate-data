@@ -26,24 +26,28 @@ public class Main {
     public static void main(final String[] args) throws InterruptedException {
         LOG.info("Iniciando drone...");
         final var drone = launch();
-        EXECUTOR.submit(drone);
 
-        final var mqConnection = new DroneConnection("drones", "fanout", "", "UTF-8");
+        // Fix: Add queue parameter as first argument
+        final var mqConnection = new DroneConnection("drones.climate_data.send", "drones", "fanout", "", "UTF-8");
         mqConnection.createConnection();
+
         drone.subscribe(message -> {
             LOG.info("Enviando mensagem... {}", message);
             mqConnection.send(message);
         });
 
-        EXECUTOR.shutdown();
-        EXECUTOR.awaitTermination(3, TimeUnit.MINUTES);
+        // Submit drone to executor
+        EXECUTOR.submit(drone);
 
+        // Set up timer for automatic shutdown after 3 minutes
         final var cancellation = new TimerTask() {
             @Override
             public void run() {
                 try {
+                    LOG.info("Finalizando drone automaticamente...");
                     drone.close();
                     mqConnection.close();
+                    EXECUTOR.shutdown();
                 } catch (final IOException e) {
                     LOG.error("Erro ao finalizar drone automaticamente", e);
                 }
@@ -51,6 +55,9 @@ public class Main {
         };
 
         TIMER.schedule(cancellation, 3 * 60_000L);
+
+        // Wait for shutdown (either by timer or external signal)
+        EXECUTOR.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
     }
 
     private static Drone launch() {
