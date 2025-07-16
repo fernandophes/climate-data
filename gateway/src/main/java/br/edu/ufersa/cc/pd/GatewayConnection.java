@@ -5,14 +5,15 @@ import br.edu.ufersa.cc.pd.mq.RabbitMqConnection;
 
 public class GatewayConnection extends RabbitMqConnection<String> {
 
-    public GatewayConnection(final MqConnectionData data, final Class<String> messageType, final String exchange,
-            final String exchangeType, final String routingKey, final String dataModel) {
-        super(data, messageType, exchange, exchangeType, routingKey, dataModel);
+    public GatewayConnection(final MqConnectionData data, final Class<String> messageType, final String queue,
+            final String exchange, final String exchangeType, final String routingKey, final String dataModel) {
+        super(data, messageType, queue, exchange, exchangeType, routingKey, dataModel);
     }
 
-    public GatewayConnection(final String exchange, final String exchangeType, final String routingKey,
+    public GatewayConnection(final String queue, final String exchange, final String exchangeType,
+            final String routingKey,
             final String dataModel) {
-        this(new MqConnectionData(), String.class, exchange, exchangeType, routingKey, dataModel);
+        this(new MqConnectionData(), String.class, queue, exchange, exchangeType, routingKey, dataModel);
     }
 
 }

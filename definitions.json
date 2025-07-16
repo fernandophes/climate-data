@@ -1,58 +1,81 @@
 {
-    "users": [
-        {
-            "name": "drones",
-            "password": "123456",
-            "tags": [
-                "administrator"
-            ],
-            "limits": {}
-        }
-    ],
-    "vhosts": [
-        {
-            "name": "/"
-        }
-    ],
-    "queues": [
-        {
-            "name": "climate_data.send",
-            "vhost": "/",
-            "durable": true,
-            "auto_delete": false,
-            "arguments": {
-                "x-queue-type": "classic"
-            }
-        }
-    ],
-    "exchanges": [
-        {
-            "name": "drones",
-            "vhost": "/",
-            "type": "fanout",
-            "durable": true,
-            "auto_delete": false,
-            "internal": false,
-            "arguments": {}
-        }
-    ],
-    "permissions": [
-        {
-            "user": "drones",
-            "vhost": "/",
-            "configure": ".*",
-            "write": ".*",
-            "read": ".*"
-        }
-    ],
-    "bindings": [
-        {
-            "source": "drones",
-            "destination": "climate_data.send",
-            "destination_type": "queue",
-            "vhost": "/",
-            "routing_key": "",
-            "arguments": {}
-        }
-    ]
+  "rabbit_version": "3.11.28",
+  "rabbitmq_version": "3.11.28",
+  "product_name": "RabbitMQ",
+  "product_version": "3.11.28",
+  "users": [
+    {
+      "name": "brokeradmin",
+      "password_hash": "VNhNrKrLFoNUDuDnUIVr705zJvc6eaIBitvqo9YDT+iF3Xq5",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": "administrator",
+      "limits": {}
+    }, 
+    {
+      "name": "drones",
+      "password_hash": "VNhNrKrLFoNUDuDnUIVr705zJvc6eaIBitvqo9YDT+iF3Xq5",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": "management",
+      "limits": {}
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "/"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "drones",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "topic_permissions": [],
+  "parameters": [],
+  "policies": [
+    {
+      "vhost": "/",
+      "name": "ha",
+      "pattern": ".*",
+      "apply-to": "all",
+      "definition": {
+        "ha-mode": "all",
+        "ha-sync-mode": "automatic"
+      },
+      "priority": 0
+    }
+  ],
+  "queues": [
+    {
+      "name": "drones.climate_data.send",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "drones",
+      "vhost": "/",
+      "type": "fanout",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "drones",
+      "destination": "drones.climate_data.send",
+      "routing_key": "climate_data.send",
+      "destination_type": "queue",
+      "arguments": {},
+      "vhost": "/"
+    }
+  ]
 }
