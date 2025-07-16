@@ -47,7 +47,6 @@ public class RabbitMqConnection<T> implements MqConnection<T> {
             connection = factory.newConnection();
             channel = connection.createChannel();
             channel.exchangeDeclare(exchange, exchangeType, true);
-            channel.queueBind(queue, exchange, routingKey);
         } catch (final IOException | TimeoutException e) {
             throw new MqConnectionException("Failed to create MQ connection", e);
         }
@@ -56,10 +55,8 @@ public class RabbitMqConnection<T> implements MqConnection<T> {
     @Override
     public T receive() {
         try {
-            final var messageAsString = channel.basicConsume(queue, true,
-                    (consumerTag, entrega) -> new String(entrega.getBody(), dataModel),
-                    consumerTag -> {
-                    });
+            final var response = channel.basicGet(queue, true);
+            final var messageAsString = new String(response.getBody());
 
             return GSON.fromJson(messageAsString, messageType);
         } catch (final IOException e) {
