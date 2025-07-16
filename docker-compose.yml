@@ -23,6 +23,9 @@ services:
     build:
       context: ./drone
       dockerfile: Dockerfile
+      args:
+        - GITHUB_USERNAME=vitorrafaelm
+        - GITHUB_TOKEN=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
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -46,6 +49,8 @@ services:
       context: ./drone
       dockerfile: Dockerfile
       args:
+        - GITHUB_USERNAME=vitorrafaelm
+        - GITHUB_TOKEN=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
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -69,6 +74,8 @@ services:
       context: ./drone
       dockerfile: Dockerfile
       args:
+        - GITHUB_USERNAME=vitorrafaelm
+        - GITHUB_TOKEN=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
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -91,6 +98,9 @@ services:
     build:
       context: ./drone
       dockerfile: Dockerfile
+      args:
+        - GITHUB_USERNAME=vitorrafaelm
+        - GITHUB_TOKEN=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
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -113,6 +123,9 @@ services:
     build:
       context: ./gateway
       dockerfile: Dockerfile
+      args:
+        - GITHUB_USERNAME=vitorrafaelm
+        - GITHUB_TOKEN=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
     depends_on:
       rabbitmq:
         condition: service_healthy
