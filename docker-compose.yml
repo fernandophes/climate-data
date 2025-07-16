@@ -23,11 +23,9 @@ services:
     build:
       context: ./drone
       dockerfile: Dockerfile
-      args:
-        - GITHUB_USERNAME=vitorrafaelm
-        - GITHUB_TOKEN=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
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     environment:
       - DRONE_NAME=Norte
       - DRONE_PORT=8081
@@ -48,10 +46,9 @@ services:
       context: ./drone
       dockerfile: Dockerfile
       args:
-        - GITHUB_USERNAME=vitorrafaelm
-        - GITHUB_TOKEN=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
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     environment:
       - DRONE_NAME=Sul
       - DRONE_PORT=8082
@@ -72,10 +69,9 @@ services:
       context: ./drone
       dockerfile: Dockerfile
       args:
-        - GITHUB_USERNAME=vitorrafaelm
-        - GITHUB_TOKEN=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
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     environment:
       - DRONE_NAME=Leste
       - DRONE_PORT=8083
@@ -95,11 +91,9 @@ services:
     build:
       context: ./drone
       dockerfile: Dockerfile
-      args:
-        - GITHUB_USERNAME=vitorrafaelm
-        - GITHUB_TOKEN=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
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     environment:
       - DRONE_NAME=Oeste
       - DRONE_PORT=8084
@@ -119,11 +113,9 @@ services:
     build:
       context: ./gateway
       dockerfile: Dockerfile
-      args:
-        - GITHUB_USERNAME=vitorrafaelm
-        - GITHUB_TOKEN=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
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     environment:
       - GATEWAY_PORT=8091
       - MQ_HOST=rabbitmq
