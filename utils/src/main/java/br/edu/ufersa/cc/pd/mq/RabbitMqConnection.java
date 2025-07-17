@@ -67,24 +67,39 @@ public class RabbitMqConnection<T> implements MqConnection<T> {
     public T receive() {
         try {
             LOG.info("Attempting to receive message from queue: {}", queue);
-            final var response = channel.basicGet(queue, true);
 
-            if (response == null) {
-                LOG.debug("No message available in queue: {}", queue);
-                return null;
+            // Use basicGet with a longer timeout approach
+            // Try multiple times to catch messages that arrive between polls
+            for (int attempt = 1; attempt <= 3; attempt++) {
+                final var response = channel.basicGet(queue, true);
+
+                if (response != null) {
+                    final var messageAsString = new String(response.getBody());
+                    LOG.info("Message received from queue '{}' on attempt {}: {}", queue, attempt, messageAsString);
+                    LOG.info("Message envelope - delivery tag: {}, exchange: {}, routing key: {}",
+                            response.getEnvelope().getDeliveryTag(),
+                            response.getEnvelope().getExchange(),
+                            response.getEnvelope().getRoutingKey());
+
+                    return (T) messageAsString;
+                }
+
+                // If no message found, wait a bit before next attempt
+                if (attempt < 3) {
+                    Thread.sleep(50); // Short delay between attempts
+                }
             }
 
-            final var messageAsString = new String(response.getBody());
-            LOG.info("Message received from queue '{}': {}", queue, messageAsString);
-            LOG.info("Message envelope - delivery tag: {}, exchange: {}, routing key: {}",
-                    response.getEnvelope().getDeliveryTag(),
-                    response.getEnvelope().getExchange(),
-                    response.getEnvelope().getRoutingKey());
+            LOG.debug("No message available in queue: {} after 3 attempts", queue);
+            return null;
 
-            return (T) messageAsString;
         } catch (final IOException e) {
             LOG.info("Failed to receive message from queue '{}': {}", queue, e.getMessage(), e);
             throw new MqConnectionException(e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            LOG.warn("Interrupted while receiving message from queue: {}", queue);
+            return null;
         }
     }
 
