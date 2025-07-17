@@ -1,10 +1,6 @@
 package br.edu.ufersa.cc.pd;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.Scanner;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -21,7 +17,6 @@ public class Main {
 
     private static final Logger LOG = LoggerFactory.getLogger(Main.class.getSimpleName());
     private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
-    private static final Timer TIMER = new Timer();
 
     public static void main(final String[] args) throws InterruptedException {
         LOG.info("Iniciando drone...");
@@ -40,23 +35,6 @@ public class Main {
 
             // Submit drone to executor
             EXECUTOR.submit(drone);
-
-            // Set up timer for automatic shutdown after 3 minutes
-            // final var cancellation = new TimerTask() {
-            //     @Override
-            //     public void run() {
-            //         try {
-            //             LOG.info("Finalizando drone automaticamente...");
-            //             drone.close();
-            //             mqConnection.close();
-            //             EXECUTOR.shutdown();
-            //         } catch (final IOException e) {
-            //             LOG.error("Erro ao finalizar drone automaticamente", e);
-            //         }
-            //     }
-            // };
-
-            // TIMER.schedule(cancellation, 3 * 60_000L);
 
             // Wait for shutdown (either by timer or external signal)
             EXECUTOR.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);

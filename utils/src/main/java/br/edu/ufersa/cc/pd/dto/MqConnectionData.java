@@ -14,24 +14,22 @@ public class MqConnectionData implements Serializable {
     private final String username;
     private final String password;
 
-    public MqConnectionData() {
-        // Real values (commented out for testing):
-        host = System.getenv("MQ_HOST");
-        port = Integer.parseInt(System.getenv("MQ_PORT"));
-        username = System.getenv("MQ_USERNAME");
-        password = System.getenv("MQ_PASSWORD");
+    public static MqConnectionData rabbitMq() {
+        final var host = System.getenv("MQ_HOST");
+        final var port = Integer.parseInt(System.getenv("MQ_PORT"));
+        final var username = System.getenv("MQ_USERNAME");
+        final var password = System.getenv("MQ_PASSWORD");
 
-        // // Log the environment variables for debugging
-        // System.out.println("DEBUG - MQ_HOST: " + host);
-        // System.out.println("DEBUG - MQ_PORT: " + System.getenv("MQ_PORT"));
-        // System.out.println("DEBUG - MQ_USERNAME: " + username);
-        // System.out.println("DEBUG - MQ_PASSWORD: " + password);
+        return new MqConnectionData(host, port, username, password);
+    }
 
-        // Mocked values for testing:
-        // host = "192.168.0.3";
-        // port = 5672;
-        // username = "drones";
-        // password = "123456";
+    public static MqConnectionData mqtt() {
+        final var host = System.getenv("MQ_HOST");
+        final var port = Integer.parseInt(System.getenv("MQTT_PORT"));
+        final var username = System.getenv("MQ_USERNAME");
+        final var password = System.getenv("MQ_PASSWORD");
+
+        return new MqConnectionData(host, port, username, password);
     }
 
 }

@@ -6,8 +6,6 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
-
 import br.edu.ufersa.cc.pd.GatewayConnectionMqtt;
 import br.edu.ufersa.cc.pd.contracts.MqConsumer;
 import br.edu.ufersa.cc.pd.entities.Capture;
@@ -22,17 +20,17 @@ import lombok.Getter;
 @EqualsAndHashCode(callSuper = true)
 public class Gateway extends App {
 
-    private static final Gson GSON = new Gson();
     private static final Logger LOG = LoggerFactory.getLogger(Gateway.class.getSimpleName());
 
-    private final MqConsumer<String> consumer;
+    private final MqConsumer<DroneMessage> consumer;
     private final GatewayConnectionMqtt mqttConnection;
     private final CaptureService captureService = new CaptureService();
 
     @Getter
     private boolean running = false;
 
-    public Gateway(final int port, final MqConsumer<String> consumer, final GatewayConnectionMqtt mqttConnection) {
+    public Gateway(final int port, final MqConsumer<DroneMessage> consumer,
+            final GatewayConnectionMqtt mqttConnection) {
         super(null, port);
         this.consumer = consumer;
         this.mqttConnection = mqttConnection;
@@ -51,21 +49,16 @@ public class Gateway extends App {
         capture.setRegion(region);
 
         captureService.create(capture);
-
-        // Publish to MQTT broker after saving to database
-        publishToMqttBroker(region, snapshot.format(format));
     }
 
-    private void publishToMqttBroker(final String region, final String weatherData) {
+    private void publishToMqttBroker(final DroneMessage message) {
+        final var region = message.getDroneName();
+
         try {
             // Use the single MQTT connection instance
             if (mqttConnection != null && mqttConnection.getClient() != null
                     && mqttConnection.getClient().isConnected()) {
                 final var topic = "climate_data." + region;
-
-                // Create a proper JSON object
-                final var messageData = new ClimateMessage(region, weatherData, System.currentTimeMillis());
-                final var message = GSON.toJson(messageData);
 
                 // Send to the specific topic using the existing connection
                 mqttConnection.sendToTopic(topic, message);
@@ -76,31 +69,6 @@ public class Gateway extends App {
             }
         } catch (final Exception e) {
             LOG.error("Failed to publish to MQTT broker for region: {}", region, e);
-        }
-    }
-
-    // Inner class to represent the MQTT message structure
-    private static class ClimateMessage {
-        private final String region;
-        private final String data;
-        private final long timestamp;
-
-        public ClimateMessage(String region, String data, long timestamp) {
-            this.region = region;
-            this.data = data;
-            this.timestamp = timestamp;
-        }
-
-        public String getRegion() {
-            return region;
-        }
-
-        public String getData() {
-            return data;
-        }
-
-        public long getTimestamp() {
-            return timestamp;
         }
     }
 
@@ -130,20 +98,20 @@ public class Gateway extends App {
 
         while (isRunning()) {
             LOG.info("Running Gateway LOOP - checking for messages...");
-            final var json = consumer.receive();
-            LOG.info("Raw JSON received: {}", json);
-            if (json != null) {
-                LOG.info("Raw JSON received: {}", json);
+            final var message = consumer.receive();
+            LOG.info("Raw JSON received: {}", message);
+            if (message != null) {
+                LOG.info("Raw JSON received: {}", message);
                 try {
                     // Parse the JSON string as DroneMessage
                     LOG.info("Parsing JSON message to DroneMessage object");
-                    final var droneMessage = GSON.fromJson(json, DroneMessage.class);
-                    LOG.info("Successfully parsed drone message from region: {}", droneMessage.getDroneName());
+                    LOG.info("Successfully parsed drone message from region: {}", message.getDroneName());
 
-                    saveDataInDatabase(droneMessage);
-                    LOG.info("Successfully processed message from drone: {}", droneMessage.getDroneName());
+                    saveDataInDatabase(message);
+                    publishToMqttBroker(message);
+                    LOG.info("Successfully processed message from drone: {}", message.getDroneName());
                 } catch (Exception e) {
-                    LOG.info("Failed to parse JSON message: {}", json, e);
+                    LOG.info("Failed to parse JSON message: {}", message, e);
                 }
             } else {
                 LOG.info("No message available from consumer, sleeping for 200ms...");

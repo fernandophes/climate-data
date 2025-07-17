@@ -11,7 +11,7 @@ public class DroneConnection extends RabbitMqConnection<String> {
 
     public DroneConnection(final String queue, final String exchange, final String exchangeType,
             final String routingKey, final String dataModel) {
-        this(new MqConnectionData(), queue, exchange, exchangeType, routingKey, dataModel);
+        this(MqConnectionData.rabbitMq(), queue, exchange, exchangeType, routingKey, dataModel);
     }
 
 }
