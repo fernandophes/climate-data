@@ -214,8 +214,6 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
-      db_pg:
-        condition: service_healthy
     environment:
       - GATEWAY_PORT=8091
       - POSTGRES_HOST=192.168.0.3

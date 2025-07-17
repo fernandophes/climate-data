@@ -23,6 +23,7 @@ public class Main {
 
         // MQTT Connection
         final var mqttConnection = new GatewayConnectionMqtt("climate_data");
+        mqttConnection.createConnection();
 
         final var port = Integer.parseInt(System.getenv("GATEWAY_PORT"));
         final var gateway = new Gateway(port, mqConsumerFromDrones, mqttConnection);
