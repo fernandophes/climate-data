@@ -14,12 +14,21 @@
          <font>
             <Font name="System Bold" size="18.0" />
          </font></Label>
-      <HBox alignment="CENTER" spacing="8.0">
+      <VBox alignment="CENTER" spacing="4.0">
          <children>
-            <TextField fx:id="hostField" alignment="CENTER" promptText="Host do Gateway" />
-            <TextField fx:id="portField" alignment="CENTER" layoutX="305.0" layoutY="10.0" promptText="Porta" />
+            <Label style="-fx-text-fill: #fff;" text="Host e porta do broker">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <HBox alignment="CENTER" spacing="8.0">
+               <children>
+                  <TextField fx:id="hostField" alignment="CENTER" promptText="Host do broker" text="localhost" />
+                  <TextField fx:id="portField" alignment="CENTER" layoutX="305.0" layoutY="10.0" promptText="Porta" text="5672" />
+               </children>
+            </HBox>
          </children>
-      </HBox>
+      </VBox>
       <HBox alignment="CENTER" spacing="8.0" VBox.vgrow="NEVER">
          <children>
             <Button fx:id="rabbitMqButton" onAction="#runRabbitMqClient" text="RabbitMq" />

@@ -2,12 +2,16 @@ package br.edu.ufersa.cc.pdclient.controllers;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import br.edu.ufersa.cc.pdclient.App;
 import br.edu.ufersa.cc.pdclient.dto.CaptureDto;
 import br.edu.ufersa.cc.pdclient.services.CaptureService;
-import br.edu.ufersa.cc.pdclient.services.ReceiverService;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -17,9 +21,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DashboardController {
 
-    private final ReceiverService mqService;
+    private static final Logger LOG = LoggerFactory.getLogger(DashboardController.class.getSimpleName());
+    private static final String TODAS = "Todas";
+
     private final CaptureService databaseService = new CaptureService();
-    private ObservableList<CaptureDto> captures;
+
+    private final ObservableList<CaptureDto> allCaptures = FXCollections.observableArrayList();
+    private final ObservableList<String> regions = FXCollections.observableArrayList(TODAS);
+
+    @FXML
+    private ComboBox<String> regionsCombo;
 
     @FXML
     private TableView<CaptureDto> table;
@@ -41,12 +52,6 @@ public class DashboardController {
 
     @FXML
     private void initialize() throws IOException {
-        refreshTable();
-        mqService.subscribe(captures::add);
-    }
-
-    @FXML
-    private void refreshTable() {
         table.setRowFactory(tab -> new TableRow<CaptureDto>());
 
         regionColumn.setCellValueFactory(new PropertyValueFactory<CaptureDto, String>("region"));
@@ -55,8 +60,36 @@ public class DashboardController {
         temperatureColumn.setCellValueFactory(new PropertyValueFactory<CaptureDto, Double>("temperature"));
         humidityColumn.setCellValueFactory(new PropertyValueFactory<CaptureDto, Double>("humidity"));
 
-        captures = FXCollections.observableArrayList(databaseService.listAll());
-        table.setItems(captures);
+        refreshTable();
+        table.setItems(allCaptures);
+        regionsCombo.setItems(regions);
+        regionsCombo.setValue(TODAS);
+
+        App.getReceiverService().subscribe(capture -> {
+            databaseService.create(capture, App.FORMAT);
+
+            if (!regions.contains(capture.getRegion())) {
+                regions.add(capture.getRegion());
+            }
+
+            filterByRegion();
+        });
+    }
+
+    @FXML
+    private void refreshTable() {
+        allCaptures.setAll(databaseService.listAll());
+    }
+
+    @FXML
+    private void filterByRegion() {
+        final var region = regionsCombo.getValue();
+
+        if (TODAS.equals(region)) {
+            refreshTable();
+        } else {
+            allCaptures.setAll(databaseService.listByRegion(region));
+        }
     }
 
 }

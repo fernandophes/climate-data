@@ -18,7 +18,7 @@ public class StartController {
 
     private static final Logger LOG = LoggerFactory.getLogger(StartController.class.getSimpleName());
 
-    private static final String QUEUE = "climate_data.client";
+    private static final String QUEUE = "climate_data.send";
     private static final String EXCHANGE = "drones";
     private static final String EXCHANGE_TYPE = "fanout";
     private static final String ROUTING_KEY = "";
@@ -42,6 +42,7 @@ public class StartController {
 
         final var connection = new RabbitMqConnection<>(getConnectionData(), DroneMessage.class, QUEUE, EXCHANGE,
                 EXCHANGE_TYPE, ROUTING_KEY, DATA_MODEL);
+        connection.createConnection();
 
         final var receiverService = new ReceiverService(connection);
         App.setReceiverService(receiverService);
