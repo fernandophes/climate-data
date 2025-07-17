@@ -54,7 +54,7 @@ public class StartController {
     @FXML
     private void runMqttClient() throws IOException {
         final var connection = new MqttConnection<>(getConnectionData(),
-        DroneMessage.class, QUEUE);
+                DroneMessage.class, QUEUE);
         final var receiverService = new ReceiverService(connection);
         App.setReceiverService(receiverService);
         App.setMqImplementation("MQTT");

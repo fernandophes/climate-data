@@ -83,11 +83,27 @@
       "durable": true,
       "auto_delete": false,
       "arguments": {}
+    },
+    {
+      "name": "client.climate_data.all",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
     }
   ],
   "exchanges": [
     {
       "name": "drones",
+      "vhost": "/",
+      "type": "fanout",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "client",
       "vhost": "/",
       "type": "fanout",
       "durable": true,
@@ -110,6 +126,14 @@
       "source": "drones",
       "destination": "drones.climate_data.send",
       "routing_key": "climate_data.send",
+      "destination_type": "queue",
+      "arguments": {},
+      "vhost": "/"
+    },
+    {
+      "source": "client",
+      "destination": "client.climate_data.all",
+      "routing_key": "climate_data.client",
       "destination_type": "queue",
       "arguments": {},
       "vhost": "/"
