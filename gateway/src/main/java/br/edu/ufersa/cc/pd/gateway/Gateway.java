@@ -1,13 +1,12 @@
 package br.edu.ufersa.cc.pd.gateway;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.edu.ufersa.cc.pd.GatewayConnectionMqtt;
-import br.edu.ufersa.cc.pd.contracts.MqConsumer;
+import br.edu.ufersa.cc.pd.contracts.MqSubscriber;
 import br.edu.ufersa.cc.pd.entities.Capture;
 import br.edu.ufersa.cc.pd.services.CaptureService;
 import br.edu.ufersa.cc.pd.utils.contracts.App;
@@ -22,17 +21,17 @@ public class Gateway extends App {
 
     private static final Logger LOG = LoggerFactory.getLogger(Gateway.class.getSimpleName());
 
-    private final MqConsumer<DroneMessage> consumer;
+    private final MqSubscriber<DroneMessage> mqSubscriber;
     private final GatewayConnectionMqtt mqttConnection;
     private final CaptureService captureService = new CaptureService();
 
     @Getter
     private boolean running = false;
 
-    public Gateway(final int port, final MqConsumer<DroneMessage> consumer,
+    public Gateway(final int port, final MqSubscriber<DroneMessage> consumer,
             final GatewayConnectionMqtt mqttConnection) {
         super(null, port);
-        this.consumer = consumer;
+        this.mqSubscriber = consumer;
         this.mqttConnection = mqttConnection;
     }
 
@@ -77,54 +76,24 @@ public class Gateway extends App {
         LOG.info("Running Gateway - isRunning(): {} - port: {}", isRunning(), getPort());
         running = true;
 
-        try {
-            // Initialize database
-            captureService.initialize();
-            LOG.info("Database initialized successfully");
+        // try {
+        // // Initialize single MQTT connection for reuse
+        // mqttConnection.createConnection();
+        // LOG.info("MQTT connection initialized successfully");
 
-            // Initialize single MQTT connection for reuse
-            mqttConnection.createConnection();
-            LOG.info("MQTT connection initialized successfully");
+        // } catch (final Exception e) {
+        // LOG.error("Failed to initialize MQTT connection", e);
+        // running = false;
+        // return;
+        // }
 
-        } catch (final SQLException e) {
-            LOG.error("Failed to initialize database", e);
-            running = false;
-            return;
-        } catch (final Exception e) {
-            LOG.error("Failed to initialize MQTT connection", e);
-            running = false;
-            return;
-        }
+        LOG.info("Inscrevendo-se para ler a fila dos drones...", isRunning());
+        mqSubscriber.subscribe(message -> {
+            saveDataInDatabase(message);
+            publishToMqttBroker(message);
+        });
+        LOG.info("Inscrito!", isRunning());
 
-        while (isRunning()) {
-            LOG.info("Running Gateway LOOP - checking for messages...");
-            final var message = consumer.receive();
-            LOG.info("Raw JSON received: {}", message);
-            if (message != null) {
-                LOG.info("Raw JSON received: {}", message);
-                try {
-                    // Parse the JSON string as DroneMessage
-                    LOG.info("Parsing JSON message to DroneMessage object");
-                    LOG.info("Successfully parsed drone message from region: {}", message.getDroneName());
-
-                    saveDataInDatabase(message);
-                    publishToMqttBroker(message);
-                    LOG.info("Successfully processed message from drone: {}", message.getDroneName());
-                } catch (Exception e) {
-                    LOG.info("Failed to parse JSON message: {}", message, e);
-                }
-            } else {
-                LOG.info("No message available from consumer, sleeping for 200ms...");
-                // No message available, sleep briefly to avoid busy waiting
-                try {
-                    Thread.sleep(200); // Reduced from 1000ms to be more responsive
-                } catch (InterruptedException e) {
-                    LOG.info("Gateway thread interrupted during sleep");
-                    Thread.currentThread().interrupt();
-                    break;
-                }
-            }
-        }
         LOG.info("Gateway main loop exited - isRunning(): {}", isRunning());
     }
 
