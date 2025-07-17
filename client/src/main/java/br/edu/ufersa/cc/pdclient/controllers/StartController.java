@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.edu.ufersa.cc.pd.dto.MqConnectionData;
+import br.edu.ufersa.cc.pd.mq.MqttConnection;
 import br.edu.ufersa.cc.pd.mq.RabbitMqConnection;
 import br.edu.ufersa.cc.pd.utils.dto.DroneMessage;
 import br.edu.ufersa.cc.pdclient.App;
@@ -52,10 +53,10 @@ public class StartController {
 
     @FXML
     private void runMqttClient() throws IOException {
-        // final var connection = new MqttConnection<>(getConnectionData(),
-        // DroneMessage.class, QUEUE);
-        // final var receiverService = new ReceiverService(connection);
-        // App.setReceiverService(receiverService);
+        final var connection = new MqttConnection<>(getConnectionData(),
+        DroneMessage.class, QUEUE);
+        final var receiverService = new ReceiverService(connection);
+        App.setReceiverService(receiverService);
         App.setMqImplementation("MQTT");
         App.setRoot("dashboard");
     }
