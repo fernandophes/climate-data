@@ -17,7 +17,7 @@ public class Main {
         LOG.info("Iniciando Gateway...");
 
         // RabbitMQ Consumer for receiving drone messages
-        final var mqConsumerFromDrones = new GatewayConnection("drones.climate_data.send", "drones", "fanout", "",
+        final var mqConsumerFromDrones = new GatewayConnection("climate_data.send", "drones", "fanout", "",
                 "UTF-8");
         mqConsumerFromDrones.createConnection();
 
