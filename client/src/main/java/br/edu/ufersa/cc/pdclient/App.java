@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.edu.ufersa.cc.pd.utils.dto.DataFormat;
+import br.edu.ufersa.cc.pdclient.services.CaptureService;
 import br.edu.ufersa.cc.pdclient.services.ReceiverService;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -27,6 +28,10 @@ public class App extends Application {
     @Setter
     private static ReceiverService receiverService;
 
+    @Getter
+    @Setter
+    private static String mqImplementation = "fila MQ";
+
     private static Scene scene;
 
     @Override
@@ -34,6 +39,9 @@ public class App extends Application {
         scene = new Scene(loadFXML("start"), 640, 480);
         stage.setScene(scene);
         stage.show();
+
+        var count = new CaptureService().countAll();
+        System.out.println(count);
     }
 
     public static void setRoot(final String fxml) throws IOException {

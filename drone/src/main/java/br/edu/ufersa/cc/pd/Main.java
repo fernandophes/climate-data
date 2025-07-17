@@ -42,25 +42,24 @@ public class Main {
             EXECUTOR.submit(drone);
 
             // Set up timer for automatic shutdown after 3 minutes
-            final var cancellation = new TimerTask() {
-                @Override
-                public void run() {
-                    try {
-                        LOG.info("Finalizando drone automaticamente...");
-                        drone.close();
-                        mqConnection.close();
-                        EXECUTOR.shutdown();
-                    } catch (final IOException e) {
-                        LOG.error("Erro ao finalizar drone automaticamente", e);
-                    }
-                }
-            };
+            // final var cancellation = new TimerTask() {
+            //     @Override
+            //     public void run() {
+            //         try {
+            //             LOG.info("Finalizando drone automaticamente...");
+            //             drone.close();
+            //             mqConnection.close();
+            //             EXECUTOR.shutdown();
+            //         } catch (final IOException e) {
+            //             LOG.error("Erro ao finalizar drone automaticamente", e);
+            //         }
+            //     }
+            // };
 
-            TIMER.schedule(cancellation, 3 * 60_000L);
+            // TIMER.schedule(cancellation, 3 * 60_000L);
 
             // Wait for shutdown (either by timer or external signal)
             EXECUTOR.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
-
         } catch (Exception e) {
             LOG.error("Failed to start drone", e);
             System.exit(1);

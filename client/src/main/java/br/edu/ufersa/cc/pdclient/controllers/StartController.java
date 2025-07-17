@@ -46,6 +46,7 @@ public class StartController {
 
         final var receiverService = new ReceiverService(connection);
         App.setReceiverService(receiverService);
+        App.setMqImplementation("RabbitMq");
         App.setRoot("dashboard");
     }
 
@@ -55,6 +56,7 @@ public class StartController {
         // DroneMessage.class, QUEUE);
         // final var receiverService = new ReceiverService(connection);
         // App.setReceiverService(receiverService);
+        App.setMqImplementation("MQTT");
         App.setRoot("dashboard");
     }
 

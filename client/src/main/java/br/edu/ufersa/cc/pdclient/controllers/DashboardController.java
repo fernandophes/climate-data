@@ -8,10 +8,12 @@ import org.slf4j.LoggerFactory;
 import br.edu.ufersa.cc.pdclient.App;
 import br.edu.ufersa.cc.pdclient.dto.CaptureDto;
 import br.edu.ufersa.cc.pdclient.services.CaptureService;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -28,6 +30,12 @@ public class DashboardController {
 
     private final ObservableList<CaptureDto> allCaptures = FXCollections.observableArrayList();
     private final ObservableList<String> regions = FXCollections.observableArrayList(TODAS);
+
+    @FXML
+    private Label totalCapturesLabel;
+
+    @FXML
+    private Label mqLabel;
 
     @FXML
     private ComboBox<String> regionsCombo;
@@ -64,6 +72,7 @@ public class DashboardController {
         table.setItems(allCaptures);
         regionsCombo.setItems(regions);
         regionsCombo.setValue(TODAS);
+        mqLabel.setText(App.getMqImplementation());
 
         App.getReceiverService().subscribe(capture -> {
             databaseService.create(capture, App.FORMAT);
@@ -73,12 +82,13 @@ public class DashboardController {
             }
 
             filterByRegion();
+            Platform.runLater(() -> totalCapturesLabel.setText(String.valueOf(databaseService.countAll())));
         });
     }
 
     @FXML
     private void refreshTable() {
-        allCaptures.setAll(databaseService.listAll());
+        allCaptures.setAll(databaseService.listAll().reversed());
     }
 
     @FXML
@@ -88,7 +98,7 @@ public class DashboardController {
         if (TODAS.equals(region)) {
             refreshTable();
         } else {
-            allCaptures.setAll(databaseService.listByRegion(region));
+            allCaptures.setAll(databaseService.listByRegion(region).reversed());
         }
     }
 
