@@ -12,13 +12,12 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
-
 import br.edu.ufersa.cc.pd.contracts.MqConnection;
 import br.edu.ufersa.cc.pd.dto.MqConnectionData;
 import br.edu.ufersa.cc.pd.dto.MqttConnectionData;
 import br.edu.ufersa.cc.pd.exceptions.MqConnectionException;
 import br.edu.ufersa.cc.pd.exceptions.MqProducerException;
+import br.edu.ufersa.cc.pd.utils.JsonUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -26,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 public class MqttConnection<T> implements MqConnection<T> {
 
   private static final Logger LOG = LoggerFactory.getLogger(MqttConnection.class.getSimpleName());
-  private static final Gson GSON = new Gson();
 
   private final MqConnectionData data;
   private final Class<T> messageType;
@@ -72,7 +70,7 @@ public class MqttConnection<T> implements MqConnection<T> {
         @Override
         public void messageArrived(String topic, MqttMessage message) throws Exception {
           final var messageAsString = new String(message.getPayload());
-          lastReceivedMessage = GSON.fromJson(messageAsString, messageType);
+          lastReceivedMessage = JsonUtils.fromJson(messageAsString, messageType);
           LOG.debug("Message received on topic {}: {}", topic, messageAsString);
         }
 
@@ -112,7 +110,7 @@ public class MqttConnection<T> implements MqConnection<T> {
     }
 
     try {
-      final var messageJson = GSON.toJson(message);
+      final var messageJson = JsonUtils.toJson(message);
       final var mqttMessage = new MqttMessage(messageJson.getBytes());
       mqttMessage.setQos(1); // At least once delivery
 
@@ -131,7 +129,7 @@ public class MqttConnection<T> implements MqConnection<T> {
     }
 
     try {
-      final var messageJson = GSON.toJson(message);
+      final var messageJson = JsonUtils.toJson(message);
       final var mqttMessage = new MqttMessage(messageJson.getBytes());
       mqttMessage.setQos(1); // At least once delivery
 

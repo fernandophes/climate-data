@@ -7,15 +7,17 @@ import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
 public class Snapshot implements Serializable {
 
-    private final double pressure;
-    private final double radiation;
-    private final double temperature;
-    private final double humidity;
+    private double pressure;
+    private double radiation;
+    private double temperature;
+    private double humidity;
 
     public static Snapshot from(final String formatted, final DataFormat format) {
         final var inner = formatted.replace(format.getStart(), "").replace(format.getEnd(), "");

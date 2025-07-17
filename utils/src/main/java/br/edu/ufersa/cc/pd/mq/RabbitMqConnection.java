@@ -7,7 +7,6 @@ import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -17,6 +16,7 @@ import br.edu.ufersa.cc.pd.contracts.MqSubscriber;
 import br.edu.ufersa.cc.pd.dto.MqConnectionData;
 import br.edu.ufersa.cc.pd.exceptions.MqConnectionException;
 import br.edu.ufersa.cc.pd.exceptions.MqProducerException;
+import br.edu.ufersa.cc.pd.utils.JsonUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -24,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 public class RabbitMqConnection<T> implements MqConnection<T>, MqSubscriber<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RabbitMqConnection.class.getSimpleName());
-    private static final Gson GSON = new Gson();
 
     private final MqConnectionData data;
     private final Class<T> messageType;
@@ -91,7 +90,7 @@ public class RabbitMqConnection<T> implements MqConnection<T>, MqSubscriber<T> {
                 final var messageAsString = new String(delivery.getBody(), dataModel);
                 LOG.info("Mensagem recebida: {}", messageAsString);
 
-                T obj = GSON.fromJson(messageAsString, messageType);
+                T obj = JsonUtils.fromJson(messageAsString, messageType);
                 LOG.info("Mensagem convertida: {}", obj);
 
                 consumer.accept(obj);
