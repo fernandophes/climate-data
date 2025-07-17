@@ -47,6 +47,17 @@ public class RabbitMqConnection<T> implements MqConnection<T> {
             connection = factory.newConnection();
             channel = connection.createChannel();
             channel.exchangeDeclare(exchange, exchangeType, true);
+
+            // Declare the queue and bind it to the exchange
+            channel.queueDeclare(queue, true, false, false, null);
+            if (!routingKey.isEmpty()) {
+                channel.queueBind(queue, exchange, routingKey);
+            } else {
+                // For fanout exchanges, use empty routing key
+                channel.queueBind(queue, exchange, "");
+            }
+
+            LOG.info("Queue '{}' declared and bound to exchange '{}'", queue, exchange);
         } catch (final IOException | TimeoutException e) {
             throw new MqConnectionException("Failed to create MQ connection", e);
         }
@@ -55,11 +66,24 @@ public class RabbitMqConnection<T> implements MqConnection<T> {
     @Override
     public T receive() {
         try {
+            LOG.info("Attempting to receive message from queue: {}", queue);
             final var response = channel.basicGet(queue, true);
+
+            if (response == null) {
+                LOG.debug("No message available in queue: {}", queue);
+                return null;
+            }
+
             final var messageAsString = new String(response.getBody());
+            LOG.info("Message received from queue '{}': {}", queue, messageAsString);
+            LOG.info("Message envelope - delivery tag: {}, exchange: {}, routing key: {}",
+                    response.getEnvelope().getDeliveryTag(),
+                    response.getEnvelope().getExchange(),
+                    response.getEnvelope().getRoutingKey());
 
             return (T) messageAsString;
         } catch (final IOException e) {
+            LOG.info("Failed to receive message from queue '{}': {}", queue, e.getMessage(), e);
             throw new MqConnectionException(e);
         }
     }
