@@ -12,4 +12,9 @@ public class GatewayConnectionMqtt extends MqttConnection<String> {
   public GatewayConnectionMqtt(final MqttConnectionData data, final String topic) {
     super(data, String.class, topic);
   }
+
+  // Wrapper method to expose sendToTopic functionality
+  public void sendToTopic(String topic, String message) {
+    super.sendToTopic(topic, message);
+  }
 }

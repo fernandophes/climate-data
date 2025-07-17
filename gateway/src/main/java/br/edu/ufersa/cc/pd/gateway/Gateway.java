@@ -58,19 +58,22 @@ public class Gateway extends App {
 
     private void publishToMqttBroker(final String region, final String weatherData) {
         try {
-            final var topic = "climate_data." + region;
+            // Use the single MQTT connection instance
+            if (mqttConnection != null && mqttConnection.getClient() != null
+                    && mqttConnection.getClient().isConnected()) {
+                final var topic = "climate_data." + region;
 
-            // Create a proper JSON object
-            final var messageData = new ClimateMessage(region, weatherData, System.currentTimeMillis());
-            final var message = GSON.toJson(messageData);
+                // Create a proper JSON object
+                final var messageData = new ClimateMessage(region, weatherData, System.currentTimeMillis());
+                final var message = GSON.toJson(messageData);
 
-            // Create a new MQTT connection for this specific region/topic
-            final var regionMqttConnection = new GatewayConnectionMqtt(topic);
-            regionMqttConnection.createConnection();
-            regionMqttConnection.send(message);
-            regionMqttConnection.close();
+                // Send to the specific topic using the existing connection
+                mqttConnection.sendToTopic(topic, message);
 
-            LOG.info("Published climate data to MQTT topic '{}': {}", topic, message);
+                LOG.info("Published climate data to MQTT topic '{}': {}", topic, message);
+            } else {
+                LOG.warn("MQTT connection not available, skipping message publication for region: {}", region);
+            }
         } catch (final Exception e) {
             LOG.error("Failed to publish to MQTT broker for region: {}", region, e);
         }
@@ -111,7 +114,7 @@ public class Gateway extends App {
             captureService.initialize();
             LOG.info("Database initialized successfully");
 
-            // Initialize MQTT connection
+            // Initialize single MQTT connection for reuse
             mqttConnection.createConnection();
             LOG.info("MQTT connection initialized successfully");
 
@@ -143,10 +146,10 @@ public class Gateway extends App {
                     LOG.info("Failed to parse JSON message: {}", json, e);
                 }
             } else {
-                LOG.info("No message available from consumer, sleeping for 1 second...");
+                LOG.info("No message available from consumer, sleeping for 200ms...");
                 // No message available, sleep briefly to avoid busy waiting
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(200); // Reduced from 1000ms to be more responsive
                 } catch (InterruptedException e) {
                     LOG.info("Gateway thread interrupted during sleep");
                     Thread.currentThread().interrupt();
@@ -163,8 +166,10 @@ public class Gateway extends App {
 
         // Close MQTT connection
         try {
-            mqttConnection.close();
-            LOG.info("MQTT connection closed");
+            if (mqttConnection != null) {
+                mqttConnection.close();
+                LOG.info("MQTT connection closed");
+            }
         } catch (final Exception e) {
             LOG.error("Error closing MQTT connection", e);
         }

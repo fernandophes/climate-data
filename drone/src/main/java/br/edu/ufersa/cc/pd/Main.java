@@ -25,85 +25,115 @@ public class Main {
 
     public static void main(final String[] args) throws InterruptedException {
         LOG.info("Iniciando drone...");
-        final var drone = launch();
 
-        // Fix: Add queue parameter as first argument
-        final var mqConnection = new DroneConnection("drones.climate_data.send", "drones", "fanout", "", "UTF-8");
-        mqConnection.createConnection();
+        try {
+            final var drone = launch();
 
-        drone.subscribe(message -> {
-            LOG.info("Enviando mensagem... {}", message);
-            mqConnection.send(message);
-        });
+            // Fix: Add queue parameter as first argument
+            final var mqConnection = new DroneConnection("drones.climate_data.send", "drones", "fanout", "", "UTF-8");
+            mqConnection.createConnection();
 
-        // Submit drone to executor
-        EXECUTOR.submit(drone);
+            drone.subscribe(message -> {
+                LOG.info("Enviando mensagem... {}", message);
+                mqConnection.send(message);
+            });
 
-        // Set up timer for automatic shutdown after 3 minutes
-        final var cancellation = new TimerTask() {
-            @Override
-            public void run() {
-                try {
-                    LOG.info("Finalizando drone automaticamente...");
-                    drone.close();
-                    mqConnection.close();
-                    EXECUTOR.shutdown();
-                } catch (final IOException e) {
-                    LOG.error("Erro ao finalizar drone automaticamente", e);
+            // Submit drone to executor
+            EXECUTOR.submit(drone);
+
+            // Set up timer for automatic shutdown after 3 minutes
+            final var cancellation = new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        LOG.info("Finalizando drone automaticamente...");
+                        drone.close();
+                        mqConnection.close();
+                        EXECUTOR.shutdown();
+                    } catch (final IOException e) {
+                        LOG.error("Erro ao finalizar drone automaticamente", e);
+                    }
                 }
-            }
-        };
+            };
 
-        TIMER.schedule(cancellation, 3 * 60_000L);
+            TIMER.schedule(cancellation, 3 * 60_000L);
 
-        // Wait for shutdown (either by timer or external signal)
-        EXECUTOR.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+            // Wait for shutdown (either by timer or external signal)
+            EXECUTOR.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+
+        } catch (Exception e) {
+            LOG.error("Failed to start drone", e);
+            System.exit(1);
+        }
     }
 
     private static Drone launch() {
+        LOG.info("Attempting to launch drone via environment variables...");
         try {
             return launchViaEnv();
         } catch (final Exception e) {
+            LOG.error("Failed to launch via environment variables: {}", e.getMessage(), e);
+            LOG.info("Falling back to console input...");
             return launchViaConsole();
         }
     }
 
     private static Drone launchViaConsole() {
-        System.out.println("### NOVO DRONE ###");
-        final var input = new Scanner(System.in);
+        // System.out.println("### NOVO DRONE ###");
+        // final var input = new Scanner(System.in);
 
-        System.out.print("Nome: ");
-        final var name = input.nextLine().trim();
+        // System.out.print("Nome: ");
+        // final var name = input.nextLine().trim();
 
-        System.out.print("Separador: ");
-        final var delimiter = input.nextLine();
+        // System.out.print("Separador: ");
+        // final var delimiter = input.nextLine();
 
-        System.out.print("Abertura: ");
-        final var start = input.nextLine();
+        // System.out.print("Abertura: ");
+        // final var start = input.nextLine();
 
-        System.out.print("Fechamento: ");
-        final var end = input.nextLine();
+        // System.out.print("Fechamento: ");
+        // final var end = input.nextLine();
 
-        System.out.print("Porta: ");
-        final var port = input.nextInt();
+        // System.out.print("Porta: ");
+        // final var port = input.nextInt();
 
-        input.close();
+        // input.close();
 
-        final var address = new InetSocketAddress(Constants.getDefaultHost(), port);
-        final var format = new DataFormat(delimiter, start, end);
+        // final var address = new InetSocketAddress(Constants.getDefaultHost(), port);
+        // final var format = new DataFormat(delimiter, start, end);
 
-        return new Drone(address, 0, name, format);
+        // return new Drone(address, 0, name, format);
+
+        LOG.error("Console input not available in Docker environment!");
+        throw new RuntimeException(
+                "Cannot launch drone via console in Docker - environment variables must be provided");
     }
 
     private static Drone launchViaEnv() {
-        final var port = Integer.parseInt(System.getenv("DRONE_PORT"));
+        LOG.info("Reading environment variables for drone configuration...");
+
+        final var port = System.getenv("DRONE_PORT");
         final var name = System.getenv("DRONE_NAME");
         final var delimiter = System.getenv("DRONE_DELIMITER");
         final var start = System.getenv("DRONE_START");
         final var end = System.getenv("DRONE_END");
 
-        final var address = new InetSocketAddress(Constants.getDefaultHost(), port);
+        // Log environment variables for debugging
+        LOG.info(
+                "Environment variables - DRONE_PORT: {}, DRONE_NAME: {}, DRONE_DELIMITER: {}, DRONE_START: {}, DRONE_END: {}",
+                port, name, delimiter, start, end);
+
+        // Validate environment variables
+        if (port == null || name == null || delimiter == null || start == null || end == null) {
+            throw new IllegalStateException("Missing required environment variables for drone configuration");
+        }
+
+        final var portInt = Integer.parseInt(port);
+        final var address = new InetSocketAddress(Constants.getDefaultHost(), portInt);
         final var format = new DataFormat(delimiter, start, end);
+
+        LOG.info("Creating drone - Name: {}, Port: {}, Format: delimiter='{}', start='{}', end='{}'",
+                name, portInt, delimiter, start, end);
 
         return new Drone(address, 0, name, format);
     }
