@@ -49,7 +49,7 @@ public class MqttConnection<T> implements MqConnection<T> {
         mqttData.getUsername(), mqttData.getPassword());
     this.messageType = messageType;
     this.topic = topic;
-    this.clientId = "mqtt-client-gateway";
+    this.clientId = "mqtt-client-" + UUID.randomUUID().toString(); // Generate unique client ID
   }
 
   @Override
@@ -121,6 +121,25 @@ public class MqttConnection<T> implements MqConnection<T> {
 
     } catch (final MqttException e) {
       throw new MqProducerException("Failed to send MQTT message", e);
+    }
+  }
+
+  // New method to publish to a specific topic using the same connection
+  public void sendToTopic(String targetTopic, T message) {
+    if (!isConnected()) {
+      throw new MqConnectionException("MQTT client is not connected");
+    }
+
+    try {
+      final var messageJson = GSON.toJson(message);
+      final var mqttMessage = new MqttMessage(messageJson.getBytes());
+      mqttMessage.setQos(1); // At least once delivery
+
+      client.publish(targetTopic, mqttMessage);
+      LOG.info("Message sent to topic {}: {}", targetTopic, message);
+
+    } catch (final MqttException e) {
+      throw new MqProducerException("Failed to send MQTT message to topic: " + targetTopic, e);
     }
   }
 
