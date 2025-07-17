@@ -1,4 +1,4 @@
-module br.edu.ufersa.cc.pd.utils {
+module br.edu.ufersa.cc.pdutils {
     requires com.google.gson;
     requires com.rabbitmq.client;
     requires org.eclipse.paho.client.mqttv3;

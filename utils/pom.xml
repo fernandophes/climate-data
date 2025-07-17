@@ -10,13 +10,13 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
     </properties>
-	<distributionManagement>
-		<repository>
-			<id>github</id>
-			<name>GitHub Climate Data Apache Maven Packages</name>
-			<url>https://maven.pkg.github.com/fernandophes/climate-data</url>
-		</repository>
-	</distributionManagement>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Climate Data Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/fernandophes/climate-data</url>
+        </repository>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>

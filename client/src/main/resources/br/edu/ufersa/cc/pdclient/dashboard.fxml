@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="TOP_CENTER" prefHeight="600.0" prefWidth="800.0" spacing="20.0" style="-fx-background-color: #000;" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.edu.ufersa.cc.pdclient.controllers.DashboardController">
+   <children>
+      <Label style="-fx-text-fill: #fff;" text="Dashboard">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font></Label>
+      <TableView fx:id="table">
+        <columns>
+          <TableColumn fx:id="regionColumn" prefWidth="110.0" text="Regiao" />
+          <TableColumn fx:id="pressureColumn" prefWidth="110.0" text="Pressao" />
+            <TableColumn fx:id="radiationColumn" prefWidth="110.0" text="Radiaçao" />
+            <TableColumn fx:id="temperatureColumn" prefWidth="110.0" text="Temperatura" />
+            <TableColumn fx:id="humidityColumn" prefWidth="110.0" text="Umidade" />
+        </columns>
+      </TableView>
+   </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+</VBox>

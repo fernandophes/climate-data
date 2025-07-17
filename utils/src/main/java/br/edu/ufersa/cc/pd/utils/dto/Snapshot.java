@@ -2,6 +2,7 @@ package br.edu.ufersa.cc.pd.utils.dto;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ public class Snapshot implements Serializable {
 
     public static Snapshot from(final String formatted, final DataFormat format) {
         final var inner = formatted.replace(format.getStart(), "").replace(format.getEnd(), "");
-        final var parts = Stream.of(inner.split(format.getDelimiter()))
+        final var parts = Stream.of(inner.split(Pattern.quote(format.getDelimiter())))
                 .map(Double::parseDouble)
                 .toList();
 

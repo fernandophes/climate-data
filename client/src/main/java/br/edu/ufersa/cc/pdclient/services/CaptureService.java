@@ -1,12 +1,14 @@
-package br.edu.ufersa.cc.pd.services;
+package br.edu.ufersa.cc.pdclient.services;
 
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import br.edu.ufersa.cc.pd.entities.Capture;
-import br.edu.ufersa.cc.pd.repositories.CaptureRepository;
+import br.edu.ufersa.cc.pdclient.App;
+import br.edu.ufersa.cc.pdclient.dto.CaptureDto;
+import br.edu.ufersa.cc.pdclient.entities.Capture;
+import br.edu.ufersa.cc.pdclient.repositories.CaptureRepository;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
@@ -16,14 +18,18 @@ public class CaptureService {
 
     private CaptureRepository captureRepository = new CaptureRepository();
 
-    public List<Capture> listAll() {
+    public List<CaptureDto> listAll() {
         LOG.info("Listando todas as capturas...");
-        return captureRepository.listAll();
+        return captureRepository.listAll().stream()
+                .map(capture -> CaptureDto.from(capture.getRegion(), capture.getWeatherData(), App.FORMAT))
+                .toList();
     }
 
-    public List<Capture> listByRegion(final String region) {
+    public List<CaptureDto> listByRegion(final String region) {
         LOG.info("Listando capturas da região: {}", region);
-        return captureRepository.listByRegion(region);
+        return captureRepository.listByRegion(region).stream()
+                .map(capture -> CaptureDto.from(capture.getRegion(), capture.getWeatherData(), App.FORMAT))
+                .toList();
     }
 
     public long countAll() {

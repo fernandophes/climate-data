@@ -1,4 +1,4 @@
-package br.edu.ufersa.cc.pd.entities;
+package br.edu.ufersa.cc.pdclient.entities;
 
 import java.util.UUID;
 

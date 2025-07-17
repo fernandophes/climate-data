@@ -1,8 +1,8 @@
-package br.edu.ufersa.cc.pd.repositories;
+package br.edu.ufersa.cc.pdclient.repositories;
 
 import java.util.List;
 
-import br.edu.ufersa.cc.pd.entities.Capture;
+import br.edu.ufersa.cc.pdclient.entities.Capture;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import lombok.AllArgsConstructor;
