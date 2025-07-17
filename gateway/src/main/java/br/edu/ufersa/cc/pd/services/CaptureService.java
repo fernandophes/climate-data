@@ -3,6 +3,7 @@ package br.edu.ufersa.cc.pd.services;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,8 +26,8 @@ public class CaptureService {
 
         try (final var statement = CaptureRepository.getConnection().createStatement()) {
             statement.executeUpdate(
-                    "create table " + tableName
-                            + " (id VARCHAR(255) PRIMARY KEY AUTO_INCREMENT, weather_data VARCHAR(255), region VARCHAR(255))");
+                    "create table if not exists " + tableName
+                            + " (id UUID DEFAULT RANDOM_UUID() PRIMARY KEY, weather_data TEXT, region VARCHAR(255))");
             LOG.info("Criada tabela {}", tableName);
         } catch (SQLException e) {
             throw new SQLException("Erro ao inicializar banco de dados", e);
@@ -47,7 +48,7 @@ public class CaptureService {
         LOG.info("Ordem cadastrada");
     }
 
-    public Capture findById(final Long id) throws NoSuchElementException {
+    public Capture findById(final UUID id) throws NoSuchElementException {
         LOG.info("Buscando ordem...");
         return captureRepository.findById(id);
     }

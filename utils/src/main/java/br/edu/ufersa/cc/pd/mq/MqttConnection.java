@@ -49,7 +49,7 @@ public class MqttConnection<T> implements MqConnection<T> {
         mqttData.getUsername(), mqttData.getPassword());
     this.messageType = messageType;
     this.topic = topic;
-    this.clientId = "mqtt-client-" + UUID.randomUUID().toString();
+    this.clientId = "mqtt-client-gateway";
   }
 
   @Override
@@ -100,11 +100,8 @@ public class MqttConnection<T> implements MqConnection<T> {
       throw new MqConnectionException("MQTT client is not connected");
     }
 
-    // Return the last received message (this is a simple implementation)
-    // For a more robust solution, you might want to use a queue or blocking
-    // mechanism
     T message = lastReceivedMessage;
-    lastReceivedMessage = null; // Clear after reading
+    lastReceivedMessage = null;
     return message;
   }
 

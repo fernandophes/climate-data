@@ -15,12 +15,18 @@ public class Main {
 
     public static void main(final String[] args) {
         LOG.info("Iniciando Gateway...");
-        final var mqConsumerFromDrones = new GatewayConnection("climate_data.send", "drones", "fanout", "", "UTF-8");
+
+        // RabbitMQ Consumer for receiving drone messages
+        final var mqConsumerFromDrones = new GatewayConnection("drones.climate_data.send", "drones", "fanout", "",
+                "UTF-8");
         mqConsumerFromDrones.createConnection();
-        //
+
+        // MQTT Connection
+        final var mqttConnection = new GatewayConnectionMqtt("climate_data");
 
         final var port = Integer.parseInt(System.getenv("GATEWAY_PORT"));
-        final var gateway = new Gateway(port, mqConsumerFromDrones);
+        // final var port = 8090;
+        final var gateway = new Gateway(port, mqConsumerFromDrones, mqttConnection);
         EXECUTOR.submit(gateway);
     }
 

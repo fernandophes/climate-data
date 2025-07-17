@@ -15,13 +15,41 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CaptureRepository {
 
-    private static final String URL = "jdbc:h2:mem:db1;DB_CLOSE_DELAY=-1";
-    private static final String USER = "sa";
-    private static final String PASSWORD = "";
+    private static final String URL = buildDatabaseUrl();
+    // Real values from environment variables:
+    // private static final String USER = System.getenv("POSTGRES_USER");
+    // private static final String PASSWORD = System.getenv("POSTGRES_PASSWORD");
+
+    // Mock data matching docker-compose.yml variables:
+    private static final String USER = "climate_data";
+    private static final String PASSWORD = "climate_data";
     private final String tableName;
 
     // Configurar acesso ao Banco de Dados
     private static Connection connection = null;
+
+    private static String buildDatabaseUrl() {
+        // Real values from environment variables:
+        final var pgHost = System.getenv("POSTGRES_HOST");
+        final var pgPort = System.getenv("POSTGRES_PORT");
+        final var pgDatabase = System.getenv("POSTGRES_DB");
+
+        System.out.println("DEBUG - POSTGRES_HOST: " + pgHost);
+        System.out.println("DEBUG - POSTGRES_PORT: " + pgPort);
+        System.out.println("DEBUG - POSTGRES_DB: " + pgDatabase);
+
+        // Mock data matching docker-compose.yml variables:
+        // final var pgHost = "192.168.0.3";
+        // final var pgPort = "5432";
+        // final var pgDatabase = "climate_data";
+
+        if (pgHost != null && pgPort != null && pgDatabase != null) {
+            // Use PostgreSQL connection for Docker environment
+            return String.format("jdbc:postgresql://%s:%s/%s", pgHost, pgPort, pgDatabase);
+        } else {
+            throw new IllegalStateException("PostgreSQL environment variables are not set.");
+        }
+    }
 
     // Abrir uma conexão única, e retornar a atual se já existir
     public static Connection getConnection() throws SQLException {
@@ -29,7 +57,7 @@ public class CaptureRepository {
             try {
                 connection = DriverManager.getConnection(URL, USER, PASSWORD);
             } catch (final SQLException e) {
-                throw new SQLException("Erro ao abrir conexão com Banco de Dados", e);
+                throw new SQLException("Erro ao abrir conexão com Banco de Dados PostgreSQL", e);
             }
         }
         return connection;
@@ -47,8 +75,8 @@ public class CaptureRepository {
         try (final var statement = getConnection().createStatement()) {
             final var resultSet = statement
                     .executeQuery(
-                            "select id, name, description, created_at, done_at from " + tableName
-                                    + " Capture by created_at desc, id desc");
+                            "select id, region, weather_data from " + tableName
+                                    + " order by id desc");
 
             final var result = new ArrayList<Capture>();
             while (resultSet.next()) {
@@ -66,13 +94,13 @@ public class CaptureRepository {
         }
     }
 
-    public Capture findById(final Long id) throws NoSuchElementException {
-        final var sql = "select id, name, description, created_at, done_at from " + tableName + " where id = ?";
+    public Capture findById(final UUID id) throws NoSuchElementException {
+        final var sql = "select id, region, weather_data from " + tableName + " where id = ?";
         try (final var statement = getConnection().prepareStatement(sql)) {
-            statement.setLong(1, id);
+            statement.setString(1, id.toString());
             final var resultSet = statement.executeQuery();
 
-            if (resultSet.first()) {
+            if (resultSet.next()) {
                 return new Capture()
                         .setId(UUID.fromString(resultSet.getString("id")))
                         .setRegion(resultSet.getString("region"))

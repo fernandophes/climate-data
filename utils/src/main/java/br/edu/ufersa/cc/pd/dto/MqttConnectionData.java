@@ -15,10 +15,17 @@ public class MqttConnectionData implements Serializable {
   private final String password;
 
   public MqttConnectionData() {
-    host = System.getenv("MQTT_HOST") != null ? System.getenv("MQTT_HOST") : System.getenv("MQ_HOST");
-    port = System.getenv("MQTT_PORT") != null ? Integer.parseInt(System.getenv("MQTT_PORT")) : 1883;
-    username = System.getenv("MQTT_USERNAME") != null ? System.getenv("MQTT_USERNAME") : System.getenv("MQ_USERNAME");
-    password = System.getenv("MQTT_PASSWORD") != null ? System.getenv("MQTT_PASSWORD") : System.getenv("MQ_PASSWORD");
+    // Real values from environment variables:
+    host = System.getenv("MQ_HOST");
+    port = Integer.parseInt(System.getenv("MQTT_PORT"));
+    username = System.getenv("MQ_USERNAME");
+    password = System.getenv("MQ_PASSWORD");
+
+    // Mock data matching docker-compose.yml variables:
+    // host = "192.168.0.3";
+    // port = 1883;
+    // username = "drones";
+    // password = "123456";
   }
 
 }

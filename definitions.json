@@ -55,6 +55,34 @@
       "durable": true,
       "auto_delete": false,
       "arguments": {}
+    },
+    {
+      "name": "mqtt.climate_data.Norte",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "mqtt.climate_data.Sul",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "mqtt.climate_data.Leste",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "mqtt.climate_data.Oeste",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
     }
   ],
   "exchanges": [
@@ -66,6 +94,15 @@
       "auto_delete": false,
       "internal": false,
       "arguments": {}
+    },
+    {
+      "name": "amq.topic",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
     }
   ],
   "bindings": [
@@ -73,6 +110,38 @@
       "source": "drones",
       "destination": "drones.climate_data.send",
       "routing_key": "climate_data.send",
+      "destination_type": "queue",
+      "arguments": {},
+      "vhost": "/"
+    },
+    {
+      "source": "amq.topic",
+      "destination": "mqtt.climate_data.Norte",
+      "routing_key": "climate_data.Norte",
+      "destination_type": "queue",
+      "arguments": {},
+      "vhost": "/"
+    },
+    {
+      "source": "amq.topic",
+      "destination": "mqtt.climate_data.Sul",
+      "routing_key": "climate_data.Sul",
+      "destination_type": "queue",
+      "arguments": {},
+      "vhost": "/"
+    },
+    {
+      "source": "amq.topic",
+      "destination": "mqtt.climate_data.Leste",
+      "routing_key": "climate_data.Leste",
+      "destination_type": "queue",
+      "arguments": {},
+      "vhost": "/"
+    },
+    {
+      "source": "amq.topic",
+      "destination": "mqtt.climate_data.Oeste",
+      "routing_key": "climate_data.Oeste",
       "destination_type": "queue",
       "arguments": {},
       "vhost": "/"

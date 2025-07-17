@@ -58,7 +58,7 @@ public class RabbitMqConnection<T> implements MqConnection<T> {
             final var response = channel.basicGet(queue, true);
             final var messageAsString = new String(response.getBody());
 
-            return GSON.fromJson(messageAsString, messageType);
+            return (T) messageAsString;
         } catch (final IOException e) {
             throw new MqConnectionException(e);
         }
