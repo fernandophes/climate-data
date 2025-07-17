@@ -60,7 +60,6 @@ public class Main {
 
             // Wait for shutdown (either by timer or external signal)
             EXECUTOR.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
-
         } catch (Exception e) {
             LOG.error("Failed to start drone", e);
             System.exit(1);

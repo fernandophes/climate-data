@@ -1,8 +1,13 @@
-module br.edu.ufersa.cc.pd.utils {
+module br.edu.ufersa.cc.pdutils {
     requires com.google.gson;
     requires com.rabbitmq.client;
     requires org.eclipse.paho.client.mqttv3;
-    requires slf4j.api;
+    
+    requires transitive com.fasterxml.jackson.annotation;
+    requires transitive com.fasterxml.jackson.core;
+    requires transitive com.fasterxml.jackson.databind;
+    requires transitive com.fasterxml.jackson.datatype.jsr310;
+    requires transitive slf4j.api;
 
     requires static lombok;
 

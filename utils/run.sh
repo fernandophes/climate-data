@@ -1,0 +1,6 @@
+EXPORT MQ_HOST=
+EXPORT MQ_PORT=
+EXPORT MQ_USERNAME=
+EXPORT MQ_PASSWORD=
+
+mvn clean install javafx:run

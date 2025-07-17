@@ -1,27 +1,38 @@
-package br.edu.ufersa.cc.pd;
-
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+package br.edu.ufersa.cc.pdclient;
 
 import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import br.edu.ufersa.cc.pd.services.CaptureService;
+import br.edu.ufersa.cc.pd.utils.dto.DataFormat;
+import br.edu.ufersa.cc.pdclient.services.CaptureService;
+import br.edu.ufersa.cc.pdclient.services.ReceiverService;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * JavaFX App
  */
 public class App extends Application {
 
+    public static final DataFormat FORMAT = new DataFormat(" | ", "[", "]");
     private static final Logger LOG = LoggerFactory.getLogger(App.class.getSimpleName());
 
+    @Getter
+    @Setter
+    private static ReceiverService receiverService;
+
+    @Getter
+    @Setter
+    private static String mqImplementation = "fila MQ";
+
     private static Scene scene;
-    private static CaptureService captureService = new CaptureService();
 
     @Override
     public void start(final Stage stage) throws IOException {
@@ -29,8 +40,8 @@ public class App extends Application {
         stage.setScene(scene);
         stage.show();
 
-        final var captures = captureService.listAll();
-        LOG.info("Capturas encontradas: {}", captures.size());
+        var count = new CaptureService().countAll();
+        System.out.println(count);
     }
 
     public static void setRoot(final String fxml) throws IOException {

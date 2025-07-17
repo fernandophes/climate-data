@@ -1,4 +1,4 @@
-package br.edu.ufersa.cc.pd.mq;
+package br.edu.ufersa.cc.pd;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
@@ -7,23 +7,23 @@ import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.Gson;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
 import br.edu.ufersa.cc.pd.contracts.MqConnection;
-import br.edu.ufersa.cc.pd.contracts.MqSubscriber;
 import br.edu.ufersa.cc.pd.dto.MqConnectionData;
 import br.edu.ufersa.cc.pd.exceptions.MqConnectionException;
 import br.edu.ufersa.cc.pd.exceptions.MqProducerException;
-import br.edu.ufersa.cc.pd.utils.JsonUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class RabbitMqConnection<T> implements MqConnection<T>, MqSubscriber<T> {
+public class RabbitMqConnection2<T> implements MqConnection<T> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RabbitMqConnection.class.getSimpleName());
+    private static final Logger LOG = LoggerFactory.getLogger(RabbitMqConnection2.class.getSimpleName());
+    private static final Gson GSON = new Gson();
 
     private final MqConnectionData data;
     private final Class<T> messageType;
@@ -48,17 +48,6 @@ public class RabbitMqConnection<T> implements MqConnection<T>, MqSubscriber<T> {
             connection = factory.newConnection();
             channel = connection.createChannel();
             channel.exchangeDeclare(exchange, exchangeType, true);
-
-            // Declare the queue and bind it to the exchange
-            channel.queueDeclare(queue, true, false, false, null);
-            if (!routingKey.isEmpty()) {
-                channel.queueBind(queue, exchange, routingKey);
-            } else {
-                // For fanout exchanges, use empty routing key
-                channel.queueBind(queue, exchange, "");
-            }
-
-            LOG.info("Queue '{}' declared and bound to exchange '{}'", queue, exchange);
         } catch (final IOException | TimeoutException e) {
             throw new MqConnectionException("Failed to create MQ connection", e);
         }
@@ -67,37 +56,30 @@ public class RabbitMqConnection<T> implements MqConnection<T>, MqSubscriber<T> {
     @Override
     public T receive() {
         try {
-            LOG.info("Attempting to receive message from queue: {}", queue);
-            final var response = channel.basicGet(queue, true);
-
-            if (response == null) {
-                LOG.debug("No message available in queue: {}", queue);
-                return null;
-            }
-
+            LOG.info("Aguardando mensagem...");
+            final var response = channel.basicGet(String.join(".", exchange, queue), true);
+            LOG.info("Response lido: {}", response);
             final var messageAsString = new String(response.getBody());
+            LOG.info("Mensagem lida (string): {}", messageAsString);
 
-            return (T) messageAsString;
+            T obj = GSON.fromJson(messageAsString, messageType);
+            LOG.info("Mensagem convertida: {}", obj);
+            return obj;
         } catch (final IOException e) {
-            LOG.info("Failed to receive message from queue '{}': {}", queue, e.getMessage(), e);
             throw new MqConnectionException(e);
         }
     }
 
-    public String subscribe(final Consumer<T> consumer) {
-        try {
-            return channel.basicConsume(String.join(".", exchange, queue), true, (tag, delivery) -> {
-                final var messageAsString = new String(delivery.getBody(), dataModel);
-                LOG.info("Mensagem recebida: {}", messageAsString);
+    public String subscribe(final Consumer<T> consumer) throws IOException {
+        return channel.basicConsume(String.join(".", exchange, queue), true, (tag, delivery) -> {
+            final var messageAsString = new String(delivery.getBody(), dataModel);
+            LOG.info("Mensagem recebida: {}", messageAsString);
 
-                T obj = JsonUtils.fromJson(messageAsString, messageType);
-                LOG.info("Mensagem convertida: {}", obj);
+            T obj = GSON.fromJson(messageAsString, messageType);
+            LOG.info("Mensagem convertida: {}", obj);
 
-                consumer.accept(obj);
-            }, tag -> LOG.error("Leitura cancelada: {}", tag));
-        } catch (IOException e) {
-            throw new MqConnectionException(e);
-        }
+            consumer.accept(obj);
+        }, tag -> LOG.error("Leitura cancelada: {}", tag));
     }
 
     @Override

@@ -2,23 +2,26 @@ package br.edu.ufersa.cc.pd.utils.dto;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
 public class Snapshot implements Serializable {
 
-    private final double pressure;
-    private final double radiation;
-    private final double temperature;
-    private final double humidity;
+    private double pressure;
+    private double radiation;
+    private double temperature;
+    private double humidity;
 
     public static Snapshot from(final String formatted, final DataFormat format) {
         final var inner = formatted.replace(format.getStart(), "").replace(format.getEnd(), "");
-        final var parts = Stream.of(inner.split(format.getDelimiter()))
+        final var parts = Stream.of(inner.split(Pattern.quote(format.getDelimiter())))
                 .map(Double::parseDouble)
                 .toList();
 
