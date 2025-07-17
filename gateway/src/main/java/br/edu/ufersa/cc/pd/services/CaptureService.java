@@ -21,13 +21,13 @@ public class CaptureService {
     }
 
     public List<Capture> listAll() {
-        LOG.info("Listando todas as ordens...");
+        LOG.info("Listando todas as capturas...");
         return captureRepository.listAll();
     }
 
     public void create(final Capture capture) {
         captureRepository.create(capture);
-        LOG.info("Ordem cadastrada");
+        LOG.info("Captura cadastrada");
     }
 
 }

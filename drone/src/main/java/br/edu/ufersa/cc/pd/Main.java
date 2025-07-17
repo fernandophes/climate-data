@@ -33,33 +33,30 @@ public class Main {
             final var mqConnection = new DroneConnection("drones.climate_data.send", "drones", "fanout", "", "UTF-8");
             mqConnection.createConnection();
 
-            drone.subscribe(message -> {
-                LOG.info("Enviando mensagem... {}", message);
-                mqConnection.send(message);
-            });
+            drone.subscribe(mqConnection::send);
 
             // Submit drone to executor
             EXECUTOR.submit(drone);
 
-            // Set up timer for automatic shutdown after 3 minutes
-            final var cancellation = new TimerTask() {
-                @Override
-                public void run() {
-                    try {
-                        LOG.info("Finalizando drone automaticamente...");
-                        drone.close();
-                        mqConnection.close();
-                        EXECUTOR.shutdown();
-                    } catch (final IOException e) {
-                        LOG.error("Erro ao finalizar drone automaticamente", e);
-                    }
-                }
-            };
+            // // Set up timer for automatic shutdown after 3 minutes
+            // final var cancellation = new TimerTask() {
+            //     @Override
+            //     public void run() {
+            //         try {
+            //             LOG.info("Finalizando drone automaticamente...");
+            //             drone.close();
+            //             mqConnection.close();
+            //             EXECUTOR.shutdown();
+            //         } catch (final IOException e) {
+            //             LOG.error("Erro ao finalizar drone automaticamente", e);
+            //         }
+            //     }
+            // };
 
-            TIMER.schedule(cancellation, 3 * 60_000L);
+            // TIMER.schedule(cancellation, 3 * 60_000L);
 
-            // Wait for shutdown (either by timer or external signal)
-            EXECUTOR.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+            // // Wait for shutdown (either by timer or external signal)
+            // EXECUTOR.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
         } catch (Exception e) {
             LOG.error("Failed to start drone", e);
             System.exit(1);

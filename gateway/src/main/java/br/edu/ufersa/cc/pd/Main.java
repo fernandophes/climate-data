@@ -23,6 +23,7 @@ public class Main {
 
         // MQTT Connection
         final var mqttConnection = new GatewayConnectionMqtt("climate_data");
+        mqttConnection.createConnection();
 
         final var mqProducerFromDrones = new GatewayConnection("climate_data.all", "client", "fanout", "",
                 "UTF-8");
