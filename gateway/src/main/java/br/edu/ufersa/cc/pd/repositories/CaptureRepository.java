@@ -17,12 +17,12 @@ public class CaptureRepository {
 
     private static final String URL = buildDatabaseUrl();
     // Real values from environment variables:
-    // private static final String USER = System.getenv("POSTGRES_USER");
-    // private static final String PASSWORD = System.getenv("POSTGRES_PASSWORD");
+    private static final String USER = System.getenv("POSTGRES_USER");
+    private static final String PASSWORD = System.getenv("POSTGRES_PASSWORD");
 
     // Mock data matching docker-compose.yml variables:
-    private static final String USER = "climate_data";
-    private static final String PASSWORD = "climate_data";
+    // private static final String USER = "climate_data";
+    // private static final String PASSWORD = "climate_data";
     private final String tableName;
 
     // Configurar acesso ao Banco de Dados
@@ -34,9 +34,9 @@ public class CaptureRepository {
         final var pgPort = System.getenv("POSTGRES_PORT");
         final var pgDatabase = System.getenv("POSTGRES_DB");
 
-        System.out.println("DEBUG - POSTGRES_HOST: " + pgHost);
-        System.out.println("DEBUG - POSTGRES_PORT: " + pgPort);
-        System.out.println("DEBUG - POSTGRES_DB: " + pgDatabase);
+        // System.out.println("DEBUG - POSTGRES_HOST: " + pgHost);
+        // System.out.println("DEBUG - POSTGRES_PORT: " + pgPort);
+        // System.out.println("DEBUG - POSTGRES_DB: " + pgDatabase);
 
         // Mock data matching docker-compose.yml variables:
         // final var pgHost = "192.168.0.3";

@@ -21,6 +21,12 @@ public class MqConnectionData implements Serializable {
         username = System.getenv("MQ_USERNAME");
         password = System.getenv("MQ_PASSWORD");
 
+        // // Log the environment variables for debugging
+        // System.out.println("DEBUG - MQ_HOST: " + host);
+        // System.out.println("DEBUG - MQ_PORT: " + System.getenv("MQ_PORT"));
+        // System.out.println("DEBUG - MQ_USERNAME: " + username);
+        // System.out.println("DEBUG - MQ_PASSWORD: " + password);
+
         // Mocked values for testing:
         // host = "192.168.0.3";
         // port = 5672;
