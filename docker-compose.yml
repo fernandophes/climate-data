@@ -59,7 +59,7 @@ services:
       dockerfile: Dockerfile
       args:
         - GITHUB_USERNAME=vitorrafaelm
-        - GITHUB_TOKEN=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
+        - GITHUB_TOKEN=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
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -79,80 +79,80 @@ services:
       - climate-data
     command: ["sh", "-c", "sleep 15 && java -jar app.jar"]
 
-  # drone-sul:
-  #   build:
-  #     context: ./drone
-  #     dockerfile: Dockerfile
-  #     args:
-  #       - GITHUB_USERNAME=vitorrafaelm
-  #       - GITHUB_TOKEN=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
-  #   depends_on:
-  #     rabbitmq:
-  #       condition: service_healthy
-  #   environment:
-  #     - DRONE_NAME=Sul
-  #     - DRONE_PORT=8082
-  #     - DRONE_DELIMITER=;
-  #     - DRONE_START=(
-  #     - DRONE_END=)
-  #     - MQ_HOST=rabbitmq
-  #     - MQ_PORT=5672
-  #     - MQ_USERNAME=drones
-  #     - MQ_PASSWORD=123456
-  #   ports:
-  #     - "8082:8080"
-  #   networks:
-  #     - climate-data
+  drone-sul:
+    build:
+      context: ./drone
+      dockerfile: Dockerfile
+      args:
+        - GITHUB_USERNAME=vitorrafaelm
+        - GITHUB_TOKEN=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
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - DRONE_NAME=Sul
+      - DRONE_PORT=8082
+      - DRONE_DELIMITER=;
+      - DRONE_START=(
+      - DRONE_END=)
+      - MQ_HOST=rabbitmq
+      - MQ_PORT=5672
+      - MQ_USERNAME=drones
+      - MQ_PASSWORD=123456
+    ports:
+      - "8082:8080"
+    networks:
+      - climate-data
 
-  # drone-leste:
-  #   build:
-  #     context: ./drone
-  #     dockerfile: Dockerfile
-  #     args:
-  #       - GITHUB_USERNAME=vitorrafaelm
-  #       - GITHUB_TOKEN=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
-  #   depends_on:
-  #     rabbitmq:
-  #       condition: service_healthy
-  #   environment:
-  #     - DRONE_NAME=Leste
-  #     - DRONE_PORT=8083
-  #     - DRONE_DELIMITER=,
-  #     - DRONE_START={
-  #     - DRONE_END=}
-  #     - MQ_HOST=rabbitmq
-  #     - MQ_PORT=5672
-  #     - MQ_USERNAME=drones
-  #     - MQ_PASSWORD=123456
-  #   ports:
-  #     - "8083:8080"
-  #   networks:
-  #     - climate-data
+  drone-leste:
+    build:
+      context: ./drone
+      dockerfile: Dockerfile
+      args:
+        - GITHUB_USERNAME=vitorrafaelm
+        - GITHUB_TOKEN=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
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - DRONE_NAME=Leste
+      - DRONE_PORT=8083
+      - DRONE_DELIMITER=,
+      - DRONE_START={
+      - DRONE_END=}
+      - MQ_HOST=rabbitmq
+      - MQ_PORT=5672
+      - MQ_USERNAME=drones
+      - MQ_PASSWORD=123456
+    ports:
+      - "8083:8080"
+    networks:
+      - climate-data
 
-  # drone-oeste:
-  #   build:
-  #     context: ./drone
-  #     dockerfile: Dockerfile
-  #     args:
-  #       - GITHUB_USERNAME=vitorrafaelm
-  #       - GITHUB_TOKEN=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
-  #   depends_on:
-  #     rabbitmq:
-  #       condition: service_healthy
-  #   environment:
-  #     - DRONE_NAME=Oeste
-  #     - DRONE_PORT=8084
-  #     - DRONE_DELIMITER=#
-  #     - DRONE_START=[
-  #     - DRONE_END=]
-  #     - MQ_HOST=rabbitmq
-  #     - MQ_PORT=5672
-  #     - MQ_USERNAME=drones
-  #     - MQ_PASSWORD=123456
-  #   ports:
-  #     - "8084:8080"
-  #   networks:
-  #     - climate-data
+  drone-oeste:
+    build:
+      context: ./drone
+      dockerfile: Dockerfile
+      args:
+        - GITHUB_USERNAME=vitorrafaelm
+        - GITHUB_TOKEN=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
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - DRONE_NAME=Oeste
+      - DRONE_PORT=8084
+      - DRONE_DELIMITER=#
+      - DRONE_START=[
+      - DRONE_END=]
+      - MQ_HOST=rabbitmq
+      - MQ_PORT=5672
+      - MQ_USERNAME=drones
+      - MQ_PASSWORD=123456
+    ports:
+      - "8084:8080"
+    networks:
+      - climate-data
 
   gateway:
     build:
@@ -160,30 +160,31 @@ services:
       dockerfile: Dockerfile
       args:
         - GITHUB_USERNAME=vitorrafaelm
-        - GITHUB_TOKEN=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
+        - GITHUB_TOKEN=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
     depends_on:
       rabbitmq:
         condition: service_healthy
       db_pg:
         condition: service_healthy
+      drone-norte:
+        condition: service_started
     environment:
       - GATEWAY_PORT=8091
-      - POSTGRES_HOST=192.168.0.3
+      - POSTGRES_HOST=db_pg
       - POSTGRES_PORT=5432
       - POSTGRES_DB=climate_data
       - POSTGRES_USER=climate_data
       - POSTGRES_PASSWORD=climate_data
-      - MQ_HOST=192.168.0.3
+      - MQ_HOST=rabbitmq
       - MQ_PORT=5672
       - MQ_USERNAME=drones
       - MQ_PASSWORD=123456
       - MQTT_PORT=1883
-
     ports:
       - "8091:8080"
     networks:
       - climate-data
-    command: ["sh", "-c", "sleep 15 && java -jar app.jar"]
+    command: ["sh", "-c", "sleep 20 && java -jar app.jar"]
 
 configs:
   rabbitmq-plugins:
