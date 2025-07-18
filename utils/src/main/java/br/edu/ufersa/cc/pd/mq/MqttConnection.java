@@ -20,7 +20,6 @@ import br.edu.ufersa.cc.pd.dto.MqttConnectionData;
 import br.edu.ufersa.cc.pd.exceptions.MqConnectionException;
 import br.edu.ufersa.cc.pd.exceptions.MqProducerException;
 import br.edu.ufersa.cc.pd.utils.JsonUtils;
-import br.edu.ufersa.cc.pd.utils.dto.DroneMessage;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -151,14 +150,13 @@ public class MqttConnection<T> implements MqConnection<T>, MqSubscriber<T> {
   }
 
   // New method to publish to a specific topic using the same connection
-  public void sendToTopic(String targetTopic, DroneMessage message) {
+  public void sendToTopic(String targetTopic, String message) {
     try {
       if (!isConnected()) {
         throw new MqConnectionException("MQTT client is not connected");
       }
 
-      final var json = JsonUtils.toJson(message);
-      final var mqttMessage = new MqttMessage(json.getBytes());
+      final var mqttMessage = new MqttMessage(message.getBytes());
       mqttMessage.setQos(1); // At least once delivery
 
       client.publish(targetTopic, mqttMessage);
