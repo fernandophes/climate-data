@@ -15,7 +15,7 @@ public class GatewayConnectionMqtt extends MqttConnection<DroneMessage> {
   }
 
   // Wrapper method to expose sendToTopic functionality
-  public void sendToTopic(String topic, DroneMessage message) {
+  public void sendToTopic(String topic, String message) {
     super.sendToTopic(topic, message);
   }
 }

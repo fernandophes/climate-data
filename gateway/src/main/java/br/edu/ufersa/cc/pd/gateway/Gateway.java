@@ -10,6 +10,7 @@ import br.edu.ufersa.cc.pd.contracts.MqProducer;
 import br.edu.ufersa.cc.pd.contracts.MqSubscriber;
 import br.edu.ufersa.cc.pd.entities.Capture;
 import br.edu.ufersa.cc.pd.services.CaptureService;
+import br.edu.ufersa.cc.pd.utils.JsonUtils;
 import br.edu.ufersa.cc.pd.utils.contracts.App;
 import br.edu.ufersa.cc.pd.utils.dto.DataFormat;
 import br.edu.ufersa.cc.pd.utils.dto.DroneMessage;
@@ -60,12 +61,15 @@ public class Gateway extends App {
             // Use the single MQTT connection instance
             if (mqttConnection != null && mqttConnection.getClient() != null
                     && mqttConnection.getClient().isConnected()) {
-                final var topic = "mqtt.climate_data." + region;
+                final var topic = "climate_data." + region;
 
-                final var messageBytes = message.toString().getBytes("UTF-8");
+                // final var messageBytes = message.toString();
+
+                final var messageAsString = new String(message.toString());
+                final var object = JsonUtils.toJson(messageAsString);
 
                 // Send to the specific topic using the existing connection
-                mqttConnection.sendToTopic(topic, messageBytes);
+                mqttConnection.sendToTopic(topic, object.toString());
 
                 LOG.info("Published climate data to MQTT topic '{}': {}", topic, message);
             } else {
