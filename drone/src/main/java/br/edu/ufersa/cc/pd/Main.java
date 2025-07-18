@@ -40,17 +40,17 @@ public class Main {
 
             // // Set up timer for automatic shutdown after 3 minutes
             // final var cancellation = new TimerTask() {
-            //     @Override
-            //     public void run() {
-            //         try {
-            //             LOG.info("Finalizando drone automaticamente...");
-            //             drone.close();
-            //             mqConnection.close();
-            //             EXECUTOR.shutdown();
-            //         } catch (final IOException e) {
-            //             LOG.error("Erro ao finalizar drone automaticamente", e);
-            //         }
-            //     }
+            // @Override
+            // public void run() {
+            // try {
+            // LOG.info("Finalizando drone automaticamente...");
+            // drone.close();
+            // mqConnection.close();
+            // EXECUTOR.shutdown();
+            // } catch (final IOException e) {
+            // LOG.error("Erro ao finalizar drone automaticamente", e);
+            // }
+            // }
             // };
 
             // TIMER.schedule(cancellation, 3 * 60_000L);
@@ -75,34 +75,30 @@ public class Main {
     }
 
     private static Drone launchViaConsole() {
-        // System.out.println("### NOVO DRONE ###");
-        // final var input = new Scanner(System.in);
+        System.out.println("### NOVO DRONE ###");
+        final var input = new Scanner(System.in);
 
-        // System.out.print("Nome: ");
-        // final var name = input.nextLine().trim();
+        System.out.print("Nome: ");
+        final var name = input.nextLine().trim();
 
-        // System.out.print("Separador: ");
-        // final var delimiter = input.nextLine();
+        System.out.print("Separador: ");
+        final var delimiter = input.nextLine();
 
-        // System.out.print("Abertura: ");
-        // final var start = input.nextLine();
+        System.out.print("Abertura: ");
+        final var start = input.nextLine();
 
-        // System.out.print("Fechamento: ");
-        // final var end = input.nextLine();
+        System.out.print("Fechamento: ");
+        final var end = input.nextLine();
 
-        // System.out.print("Porta: ");
-        // final var port = input.nextInt();
+        System.out.print("Porta: ");
+        final var port = input.nextInt();
 
-        // input.close();
+        input.close();
 
-        // final var address = new InetSocketAddress(Constants.getDefaultHost(), port);
-        // final var format = new DataFormat(delimiter, start, end);
+        final var address = new InetSocketAddress(Constants.getDefaultHost(), port);
+        final var format = new DataFormat(delimiter, start, end);
 
-        // return new Drone(address, 0, name, format);
-
-        LOG.error("Console input not available in Docker environment!");
-        throw new RuntimeException(
-                "Cannot launch drone via console in Docker - environment variables must be provided");
+        return new Drone(address, 0, name, format);
     }
 
     private static Drone launchViaEnv() {

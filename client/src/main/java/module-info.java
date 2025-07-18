@@ -1,15 +1,14 @@
 module br.edu.ufersa.cc.pdclient {
     requires javafx.fxml;
-    requires slf4j.api;
-    requires org.hibernate.orm.core;
+    requires javafx.controls;
+    requires javafx.graphics;
+    requires java.logging;
 
     requires static lombok;
 
-    requires transitive br.edu.ufersa.cc.pdutils;
-    requires transitive jakarta.persistence;
-    requires transitive javafx.controls;
-    requires transitive javafx.graphics;
-    requires transitive org.apache.logging.log4j;
+    requires br.edu.ufersa.cc.pdutils;
+    requires jakarta.persistence;
+    requires org.hibernate.orm.core;
 
     opens br.edu.ufersa.cc.pdclient.controllers to javafx.fxml;
     opens br.edu.ufersa.cc.pdclient.entities to org.hibernate.orm.core;
