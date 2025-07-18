@@ -157,9 +157,8 @@ public class MqttConnection<T> implements MqConnection<T>, MqSubscriber<T> {
         throw new MqConnectionException("MQTT client is not connected");
       }
 
-      final var messageAsString = new String(message.toString());
-      final var object = JsonUtils.toJson(messageAsString);
-      final var mqttMessage = new MqttMessage(object.toString().getBytes());
+      final var json = JsonUtils.toJson(message);
+      final var mqttMessage = new MqttMessage(json.getBytes());
       mqttMessage.setQos(1); // At least once delivery
 
       client.publish(targetTopic, mqttMessage);
