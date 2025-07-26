@@ -19,8 +19,8 @@ public class StartController {
 
     private static final Logger LOG = LoggerFactory.getLogger(StartController.class.getSimpleName());
 
-    private static final String QUEUE = "climate_data.send";
-    private static final String EXCHANGE = "drones";
+    private static final String QUEUE = "climate_data.all";
+    private static final String EXCHANGE = "client";
     private static final String EXCHANGE_TYPE = "fanout";
     private static final String ROUTING_KEY = "";
     private static final String DATA_MODEL = "UTF-8";

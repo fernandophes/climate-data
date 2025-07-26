@@ -63,13 +63,8 @@ public class Gateway extends App {
                     && mqttConnection.getClient().isConnected()) {
                 final var topic = "climate_data." + region;
 
-                // final var messageBytes = message.toString();
-
-                final var messageAsString = new String(message.toString());
-                final var object = JsonUtils.toJson(messageAsString);
-
                 // Send to the specific topic using the existing connection
-                mqttConnection.sendToTopic(topic, object.toString());
+                mqttConnection.sendToTopic(topic, message);
 
                 LOG.info("Published climate data to MQTT topic '{}': {}", topic, message);
             } else {
