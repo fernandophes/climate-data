@@ -16,22 +16,21 @@ public class Main {
     public static void main(final String[] args) {
         LOG.info("Iniciando Gateway...");
 
-        // RabbitMQ Consumer for receiving drone messages
-        final var mqConsumerFromDrones = new GatewayConnection("climate_data.send", "drones", "fanout", "",
-                "UTF-8");
+        // Fila que recebe os dados dos drones
+        final var mqConsumerFromDrones = new GatewayConnection("climate_data.send", "drones", "fanout", "", "UTF-8");
         mqConsumerFromDrones.createConnection();
 
-        // MQTT Connection
-        final var mqttConnection = new GatewayConnectionMqtt("climate_data");
-        mqttConnection.createConnection();
-
-        final var mqProducerFromDrones = new GatewayConnection("climate_data.all", "client", "fanout", "",
+        // Fila para publisher em tempo real
+        final var realTimeMqProducer = new GatewayConnection("climate_data.all_real_time", "client", "fanout", "",
                 "UTF-8");
-        mqProducerFromDrones.createConnection();
+        realTimeMqProducer.createConnection();
 
-        // final var port = Integer.parseInt(System.getenv("GATEWAY_PORT"));
-        final var port = 8990;
-        final var gateway = new Gateway(port, mqConsumerFromDrones, mqttConnection, mqProducerFromDrones);
+        // Fila para publisher sob demanda
+        final var onDemandMqProducer = new GatewayConnection("climate_data.all", "client", "fanout", "", "UTF-8");
+        onDemandMqProducer.createConnection();
+
+        final var port = Integer.parseInt(System.getenv("GATEWAY_PORT"));
+        final var gateway = new Gateway(port, mqConsumerFromDrones, realTimeMqProducer, onDemandMqProducer);
         EXECUTOR.submit(gateway);
     }
 

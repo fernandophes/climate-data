@@ -18,4 +18,5 @@ public class GatewayConnectionMqtt extends MqttConnection<DroneMessage> {
   public void sendToTopic(String topic, DroneMessage message) {
     super.sendToTopic(topic, message);
   }
+
 }
