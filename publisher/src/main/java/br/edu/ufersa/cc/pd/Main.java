@@ -21,12 +21,22 @@ public class Main {
         final var mode = Mode.valueOf(System.getenv("MODE"));
 
         // Fila que recebe os dados do gateway
-        final var mqConsumerFromGateway = new OnDemandConnection(mode.getQueueName(), "drones", "fanout", "", "UTF-8");
+        final var mqConsumerFromGateway = new OnDemandConnection(mode.getQueueName(), "publisher", "fanout", "",
+                "UTF-8");
         mqConsumerFromGateway.createConnection();
 
         // Fila para onde os dados serão enviados
         final var mqProducer = switch (mode) {
-            case REAL_TIME -> new RealTimeConnection("real_time");
+            // Caso seja em tempo real (MQTT)
+            case REAL_TIME -> new RealTimeConnection(
+
+                    // Definir função para, a partir da mensagem, obter o tópico ao qual enviar
+                    message -> "climate_data." + message.getDroneName(),
+
+                    // Definir função para obter o tópico do qual ler
+                    () -> "real_time");
+
+            // Caso seja sob demanda (RabbitMq)
             case ON_DEMAND -> new OnDemandConnection("climate_data.on_demand", "client", "fanout", "", "UTF-8");
         };
         mqProducer.createConnection();

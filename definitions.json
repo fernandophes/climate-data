@@ -110,6 +110,15 @@
       "arguments": {}
     },
     {
+      "name": "publisher",
+      "vhost": "/",
+      "type": "fanout",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
       "name": "client",
       "vhost": "/",
       "type": "fanout",
@@ -138,8 +147,16 @@
       "vhost": "/"
     },
     {
-      "source": "client",
+      "source": "publisher",
       "destination": "client.climate_data.all",
+      "routing_key": "climate_data.client",
+      "destination_type": "queue",
+      "arguments": {},
+      "vhost": "/"
+    },
+    {
+      "source": "publisher",
+      "destination": "client.climate_data.all_real_time",
       "routing_key": "climate_data.client",
       "destination_type": "queue",
       "arguments": {},
