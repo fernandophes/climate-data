@@ -150,13 +150,14 @@ public class MqttConnection<T> implements MqConnection<T>, MqSubscriber<T> {
   }
 
   // New method to publish to a specific topic using the same connection
-  public void sendToTopic(String targetTopic, String message) {
+  public void sendToTopic(String targetTopic, T message) {
     try {
       if (!isConnected()) {
         throw new MqConnectionException("MQTT client is not connected");
       }
 
-      final var mqttMessage = new MqttMessage(message.getBytes());
+      final var json = JsonUtils.toJson(message);
+      final var mqttMessage = new MqttMessage(json.getBytes());
       mqttMessage.setQos(1); // At least once delivery
 
       client.publish(targetTopic, mqttMessage);
