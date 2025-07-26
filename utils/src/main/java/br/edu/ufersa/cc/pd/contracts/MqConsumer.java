@@ -1,6 +1,8 @@
 package br.edu.ufersa.cc.pd.contracts;
 
-public interface MqConsumer<T> {
+import java.io.Closeable;
+
+public interface MqConsumer<T> extends Closeable {
 
     T receive();
 

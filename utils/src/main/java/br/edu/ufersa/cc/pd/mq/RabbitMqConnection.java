@@ -77,7 +77,7 @@ public class RabbitMqConnection<T> implements MqConnection<T>, MqSubscriber<T> {
 
             final var messageAsString = new String(response.getBody());
 
-            return (T) messageAsString;
+            return JsonUtils.fromJson(messageAsString, messageType);
         } catch (final IOException e) {
             LOG.info("Failed to receive message from queue '{}': {}", queue, e.getMessage(), e);
             throw new MqConnectionException(e);
