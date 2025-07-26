@@ -21,18 +21,16 @@ public class Publisher extends App {
      * Conexões MQ
      */
     private final MqSubscriber<DroneMessage> consumer;
-    private final MqProducer<DroneMessage> onDemandProducer;
-    private final MqProducer<DroneMessage> realTimeProducer;
+    private final MqProducer<DroneMessage> producer;
 
     @Getter
     private boolean running = false;
 
     public Publisher(final int port, final MqSubscriber<DroneMessage> consumer,
-            final MqProducer<DroneMessage> realTimeProducer, final MqProducer<DroneMessage> onDemandProducer) {
+            final MqProducer<DroneMessage> producer) {
         super(null, port);
         this.consumer = consumer;
-        this.realTimeProducer = realTimeProducer;
-        this.onDemandProducer = onDemandProducer;
+        this.producer = producer;
     }
 
     @Override
@@ -40,10 +38,7 @@ public class Publisher extends App {
         running = true;
 
         LOG.info("Inscrevendo-se para ler a fila vinda do gateway...", isRunning());
-        consumer.subscribe(message -> {
-            realTimeProducer.send(message);
-            onDemandProducer.send(message);
-        });
+        consumer.subscribe(producer::send);
         LOG.info("Inscrito!", isRunning());
     }
 
@@ -54,8 +49,7 @@ public class Publisher extends App {
         // Close MQTT connection
         try {
             consumer.close();
-            realTimeProducer.close();
-            onDemandProducer.close();
+            producer.close();
         } catch (final Exception e) {
             LOG.error("Error closing MQTT connection", e);
         }
