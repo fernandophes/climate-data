@@ -6,10 +6,8 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import br.edu.ufersa.cc.pd.contracts.MqConnection;
 import br.edu.ufersa.cc.pd.mq.OnDemandConnection;
 import br.edu.ufersa.cc.pd.mq.RealTimeConnection;
-import br.edu.ufersa.cc.pd.utils.dto.DroneMessage;
 
 public class Main {
 
@@ -19,32 +17,23 @@ public class Main {
     public static void main(final String[] args) {
         LOG.info("Iniciando Publisher...");
 
-        // Fila que recebe os dados dos drones
-        final var mqConsumerFromGateway = new OnDemandConnection("climate_data.send", "drones", "fanout", "", "UTF-8");
+        // Modo do publisher
+        final var mode = Mode.valueOf(System.getenv("MODE"));
+
+        // Fila que recebe os dados do gateway
+        final var mqConsumerFromGateway = new OnDemandConnection(mode.getQueueName(), "drones", "fanout", "", "UTF-8");
         mqConsumerFromGateway.createConnection();
 
-        final var mqProducer = chooseMode();
+        // Fila para onde os dados serão enviados
+        final var mqProducer = switch (mode) {
+            case REAL_TIME -> new RealTimeConnection("real_time");
+            case ON_DEMAND -> new OnDemandConnection("climate_data.on_demand", "client", "fanout", "", "UTF-8");
+        };
         mqProducer.createConnection();
 
         final var port = Integer.parseInt(System.getenv("PUBLISHER_PORT"));
         final var publisher = new Publisher(port, mqConsumerFromGateway, mqProducer);
         EXECUTOR.submit(publisher);
-    }
-
-    private static MqConnection<DroneMessage> chooseMode() {
-        final var mode = Mode.valueOf(System.getenv("MODE"));
-
-        switch (mode) {
-            case REAL_TIME:
-                return new RealTimeConnection("topic");
-
-            case ON_DEMAND:
-                return new OnDemandConnection("climate_data.all_real_time", "client", "fanout", "",
-                        "UTF-8");
-
-            default:
-                return null;
-        }
     }
 
 }
