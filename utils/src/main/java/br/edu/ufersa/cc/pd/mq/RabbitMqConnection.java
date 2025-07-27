@@ -47,16 +47,6 @@ public class RabbitMqConnection<T> implements MqConnection<T>, MqSubscriber<T> {
         try {
             connection = factory.newConnection();
             channel = connection.createChannel();
-            channel.exchangeDeclare(exchange, exchangeType, true);
-
-            // Declare the queue and bind it to the exchange
-            channel.queueDeclare(queue, true, false, false, null);
-            if (!routingKey.isEmpty()) {
-                channel.queueBind(queue, exchange, routingKey);
-            } else {
-                // For fanout exchanges, use empty routing key
-                channel.queueBind(queue, exchange, "");
-            }
 
             LOG.info("Queue '{}' declared and bound to exchange '{}'", queue, exchange);
         } catch (final IOException | TimeoutException e) {
@@ -68,7 +58,7 @@ public class RabbitMqConnection<T> implements MqConnection<T>, MqSubscriber<T> {
     public T receive() {
         try {
             LOG.info("Attempting to receive message from queue: {}", queue);
-            final var response = channel.basicGet(queue, true);
+            final var response = channel.basicGet(exchange + "." + queue, true);
 
             if (response == null) {
                 LOG.debug("No message available in queue: {}", queue);
@@ -103,9 +93,9 @@ public class RabbitMqConnection<T> implements MqConnection<T>, MqSubscriber<T> {
     @Override
     public void send(final T message) {
         try {
-            final var messageBytes = message.toString().getBytes(dataModel);
+            final var messageJson = JsonUtils.toJson(message);
 
-            channel.basicPublish(exchange, routingKey, null, messageBytes);
+            channel.basicPublish(exchange, routingKey, null, messageJson.getBytes(dataModel));
             LOG.info("Message sent: {}", message);
         } catch (final Exception e) {
             throw new MqProducerException("Failed to send message", e);

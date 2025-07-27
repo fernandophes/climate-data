@@ -11,6 +11,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Consumer;
 
+import br.edu.ufersa.cc.pd.utils.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,7 @@ public class Drone extends App {
     private String name;
     private DataFormat format;
     private final Logger logger;
-    private final List<Consumer<String>> callbacks = new ArrayList<>();
+    private final List<Consumer<DroneMessage>> callbacks = new ArrayList<>();
 
     private TimerTask subscription;
 
@@ -66,9 +67,7 @@ public class Drone extends App {
                 message.setDataFormat(format);
                 message.setMessage(formatted);
 
-                final var json = GSON.toJson(message);
-
-                callbacks.forEach(callback -> callback.accept(json));
+                callbacks.forEach(callback -> callback.accept(message));
             }
         };
 
@@ -83,7 +82,7 @@ public class Drone extends App {
         }
     }
 
-    public void subscribe(final Consumer<String> callback) {
+    public void subscribe(final Consumer<DroneMessage> callback) {
         callbacks.add(callback);
     }
 

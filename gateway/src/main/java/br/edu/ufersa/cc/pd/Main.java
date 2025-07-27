@@ -21,17 +21,13 @@ public class Main {
                 "UTF-8");
         mqConsumerFromDrones.createConnection();
 
-        // MQTT Connection
-        final var mqttConnection = new GatewayConnectionMqtt("climate_data");
-        mqttConnection.createConnection();
-
-        final var mqProducerFromDrones = new GatewayConnection("climate_data.all", "client", "fanout", "",
+        final var mqProducerToClientQueue = new GatewayConnection("client_http.on_demand.all", "client_http", "fanout", "",
                 "UTF-8");
-        mqProducerFromDrones.createConnection();
+        mqProducerToClientQueue.createConnection();
 
         // final var port = Integer.parseInt(System.getenv("GATEWAY_PORT"));
-        final var port = 8990;
-        final var gateway = new Gateway(port, mqConsumerFromDrones, mqttConnection, mqProducerFromDrones);
+        final var port = 8091;
+        final var gateway = new Gateway(port, mqConsumerFromDrones, mqProducerToClientQueue);
         EXECUTOR.submit(gateway);
     }
 

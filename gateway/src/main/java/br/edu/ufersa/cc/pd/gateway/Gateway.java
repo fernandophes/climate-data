@@ -24,19 +24,17 @@ public class Gateway extends App {
     private static final Logger LOG = LoggerFactory.getLogger(Gateway.class.getSimpleName());
 
     private final MqSubscriber<DroneMessage> mqSubscriber;
-    private final MqProducer<DroneMessage> mqProducer;
-    private final GatewayConnectionMqtt mqttConnection;
+    private final MqProducer<DroneMessage> onDemand;
     private final CaptureService captureService = new CaptureService();
 
     @Getter
     private boolean running = false;
 
     public Gateway(final int port, final MqSubscriber<DroneMessage> consumer,
-            final GatewayConnectionMqtt mqttConnection, final MqProducer<DroneMessage> producer) {
+            final MqProducer<DroneMessage> onDemand) {
         super(null, port);
         this.mqSubscriber = consumer;
-        this.mqttConnection = mqttConnection;
-        this.mqProducer = producer;
+        this.onDemand = onDemand;
     }
 
     private void saveDataInDatabase(final DroneMessage message) {
@@ -54,44 +52,16 @@ public class Gateway extends App {
         captureService.create(capture);
     }
 
-    private void publishToMqttBroker(final DroneMessage message) {
-        final var region = message.getDroneName();
-
+    private void publishToProducerToClientOnDemandQueue(final DroneMessage message) {
         try {
-            // Use the single MQTT connection instance
-            if (mqttConnection != null && mqttConnection.getClient() != null
-                    && mqttConnection.getClient().isConnected()) {
-                final var topic = "climate_data." + region;
-
-                // final var messageBytes = message.toString();
-
-                final var messageAsString = new String(message.toString());
-                final var object = JsonUtils.toJson(messageAsString);
-
-                // Send to the specific topic using the existing connection
-                mqttConnection.sendToTopic(topic, object.toString());
-
-                LOG.info("Published climate data to MQTT topic '{}': {}", topic, message);
+            if (onDemand != null) {
+                onDemand.send(message);
+                LOG.info("Published drone message to producer queue for client on demand");
             } else {
-                LOG.warn("MQTT connection not available, skipping message publication for region: {}", region);
+                LOG.warn("Producer connection not available, skipping message publication for client on demand");
             }
         } catch (final Exception e) {
-            LOG.error("Failed to publish to MQTT broker for region: {}", region, e);
-        }
-    }
-
-    private void publishToProducer(final DroneMessage message) {
-        try {
-            if (mqProducer != null) {
-                // Send the processed message to the producer queue
-                mqProducer.send(message);
-                LOG.info("Published drone message to producer queue for region: {}", message.getDroneName());
-            } else {
-                LOG.warn("Producer connection not available, skipping message publication for region: {}",
-                        message.getDroneName());
-            }
-        } catch (final Exception e) {
-            LOG.error("Failed to publish to producer queue for region: {}", message.getDroneName(), e);
+            LOG.error("Failed to publish to producer queue for client on demand");
         }
     }
 
@@ -100,22 +70,10 @@ public class Gateway extends App {
         LOG.info("Running Gateway - isRunning(): {} - port: {}", isRunning(), getPort());
         running = true;
 
-        // try {
-        // // Initialize single MQTT connection for reuse
-        // mqttConnection.createConnection();
-        // LOG.info("MQTT connection initialized successfully");
-
-        // } catch (final Exception e) {
-        // LOG.error("Failed to initialize MQTT connection", e);
-        // running = false;
-        // return;
-        // }
-
         LOG.info("Inscrevendo-se para ler a fila dos drones...", isRunning());
         mqSubscriber.subscribe(message -> {
             saveDataInDatabase(message);
-            publishToMqttBroker(message);
-            publishToProducer(message);
+            publishToProducerToClientOnDemandQueue(message);
         });
         LOG.info("Inscrito!", isRunning());
 
@@ -125,16 +83,6 @@ public class Gateway extends App {
     @Override
     public void close() throws IOException {
         running = false;
-
-        // Close MQTT connection
-        try {
-            if (mqttConnection != null) {
-                mqttConnection.close();
-                LOG.info("MQTT connection closed");
-            }
-        } catch (final Exception e) {
-            LOG.error("Error closing MQTT connection", e);
-        }
     }
 
     @Override

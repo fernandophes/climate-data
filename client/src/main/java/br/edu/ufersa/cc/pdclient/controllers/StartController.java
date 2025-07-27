@@ -46,9 +46,9 @@ public class StartController {
         connection.createConnection();
 
         final var receiverService = new ReceiverService(connection);
-        App.setReceiverService(receiverService);
-        App.setMqImplementation("RabbitMq");
-        App.setRoot("dashboard");
+        Main.setReceiverService(receiverService);
+        Main.setMqImplementation("RabbitMq");
+        Main.setRoot("dashboard");
     }
 
     @FXML
@@ -56,9 +56,9 @@ public class StartController {
         final var connection = new MqttConnection<>(getConnectionData(),
                 DroneMessage.class, QUEUE);
         final var receiverService = new ReceiverService(connection);
-        App.setReceiverService(receiverService);
-        App.setMqImplementation("MQTT");
-        App.setRoot("dashboard");
+        Main.setReceiverService(receiverService);
+        Main.setMqImplementation("MQTT");
+        Main.setRoot("dashboard");
     }
 
     private MqConnectionData getConnectionData() {

@@ -57,6 +57,13 @@
       "arguments": {}
     },
     {
+      "name": "client_final.client.all",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
       "name": "mqtt.climate_data.Norte",
       "vhost": "/",
       "durable": true,
@@ -85,12 +92,12 @@
       "arguments": {}
     },
     {
-      "name": "client.climate_data.all",
+      "name": "client_http.on_demand.all",
       "vhost": "/",
       "durable": true,
       "auto_delete": false,
       "arguments": {}
-    }
+    }    
   ],
   "exchanges": [
     {
@@ -103,7 +110,7 @@
       "arguments": {}
     },
     {
-      "name": "client",
+      "name": "client_final",
       "vhost": "/",
       "type": "fanout",
       "durable": true,
@@ -115,6 +122,15 @@
       "name": "amq.topic",
       "vhost": "/",
       "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }, 
+    {
+      "name": "client_http",
+      "vhost": "/",
+      "type": "fanout",
       "durable": true,
       "auto_delete": false,
       "internal": false,
@@ -131,9 +147,17 @@
       "vhost": "/"
     },
     {
-      "source": "client",
-      "destination": "client.climate_data.all",
-      "routing_key": "climate_data.client",
+      "source": "client_final",
+      "destination": "client_final.client.all",
+      "routing_key": "climate_data.send",
+      "destination_type": "queue",
+      "arguments": {},
+      "vhost": "/"
+    },
+    {
+      "source": "client_http",
+      "destination": "client_http.on_demand.all",
+      "routing_key": "on_demand.all",
       "destination_type": "queue",
       "arguments": {},
       "vhost": "/"
