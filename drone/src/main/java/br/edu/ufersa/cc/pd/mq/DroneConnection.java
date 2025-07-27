@@ -14,5 +14,4 @@ public class DroneConnection extends RabbitMqConnection<DroneMessage> {
             final String routingKey, final String dataModel) {
         this(MqConnectionData.rabbitMq(), queue, exchange, exchangeType, routingKey, dataModel);
     }
-
 }

@@ -20,6 +20,15 @@ public class Main {
         final var mqConsumerFromDrones = new GatewayConnection("climate_data.send", "drones", "fanout", "", "UTF-8");
         mqConsumerFromDrones.createConnection();
 
+<<<<<<< HEAD
+        final var mqProducerToClientQueue = new GatewayConnection("client_http.on_demand.all", "client_http", "fanout", "",
+                "UTF-8");
+        mqProducerToClientQueue.createConnection();
+
+        // final var port = Integer.parseInt(System.getenv("GATEWAY_PORT"));
+        final var port = 8091;
+        final var gateway = new Gateway(port, mqConsumerFromDrones, mqProducerToClientQueue);
+=======
         // Fila para publisher em tempo real
         final var realTimeMqProducer = new GatewayConnection("climate_data.all_real_time", "client", "fanout", "",
                 "UTF-8");
@@ -31,6 +40,7 @@ public class Main {
 
         final var port = Integer.parseInt(System.getenv("GATEWAY_PORT"));
         final var gateway = new Gateway(port, mqConsumerFromDrones, realTimeMqProducer, onDemandMqProducer);
+>>>>>>> main
         EXECUTOR.submit(gateway);
     }
 

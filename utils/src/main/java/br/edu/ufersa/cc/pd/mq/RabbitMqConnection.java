@@ -46,16 +46,6 @@ public class RabbitMqConnection<T> implements MqConnection<T> {
         try {
             connection = factory.newConnection();
             channel = connection.createChannel();
-            channel.exchangeDeclare(exchange, exchangeType, true);
-
-            // Declare the queue and bind it to the exchange
-            channel.queueDeclare(queue, true, false, false, null);
-            if (!routingKey.isEmpty()) {
-                channel.queueBind(queue, exchange, routingKey);
-            } else {
-                // For fanout exchanges, use empty routing key
-                channel.queueBind(queue, exchange, "");
-            }
 
             LOG.info("Queue '{}' declared and bound to exchange '{}'", queue, exchange);
         } catch (final IOException | TimeoutException e) {
