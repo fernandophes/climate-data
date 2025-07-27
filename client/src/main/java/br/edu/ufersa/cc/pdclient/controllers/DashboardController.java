@@ -38,7 +38,7 @@ public class DashboardController {
     private Label mqLabel;
 
     @FXML
-    private ComboBox<String> regionsCombo;
+    private ComboBox<String> regionsComboBox;
 
     @FXML
     private TableView<CaptureDto> table;
@@ -70,8 +70,8 @@ public class DashboardController {
 
         refreshTable();
         table.setItems(allCaptures);
-        regionsCombo.setItems(regions);
-        regionsCombo.setValue(TODAS);
+        regionsComboBox.setItems(regions);
+        regionsComboBox.setValue(TODAS);
         mqLabel.setText(App.getMqImplementation());
 
         App.getReceiverService().subscribe(capture -> {
@@ -93,7 +93,7 @@ public class DashboardController {
 
     @FXML
     private void filterByRegion() {
-        final var region = regionsCombo.getValue();
+        final var region = regionsComboBox.getValue();
 
         if (TODAS.equals(region)) {
             refreshTable();
