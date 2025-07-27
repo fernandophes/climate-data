@@ -14,8 +14,6 @@ import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
-
 import br.edu.ufersa.cc.pd.utils.contracts.App;
 import br.edu.ufersa.cc.pd.utils.dto.DataFormat;
 import br.edu.ufersa.cc.pd.utils.dto.DroneMessage;
@@ -30,12 +28,11 @@ public class Drone extends App {
     private static final long INTERVAL = 3_000;
     private static final Random RANDOM = new Random();
     private static final Timer TIMER = new Timer();
-    private static final Gson GSON = new Gson();
 
     private String name;
     private DataFormat format;
     private final Logger logger;
-    private final List<Consumer<String>> callbacks = new ArrayList<>();
+    private final List<Consumer<DroneMessage>> callbacks = new ArrayList<>();
 
     private TimerTask subscription;
 
@@ -66,9 +63,7 @@ public class Drone extends App {
                 message.setDataFormat(format);
                 message.setMessage(formatted);
 
-                final var json = GSON.toJson(message);
-
-                callbacks.forEach(callback -> callback.accept(json));
+                callbacks.forEach(callback -> callback.accept(message));
             }
         };
 
@@ -83,11 +78,11 @@ public class Drone extends App {
         }
     }
 
-    public void subscribe(final Consumer<String> callback) {
+    public void subscribe(final Consumer<DroneMessage> callback) {
         callbacks.add(callback);
     }
 
-    public void unsubscribe(final Consumer<String> callback) {
+    public void unsubscribe(final Consumer<DroneMessage> callback) {
         callbacks.remove(callback);
     }
 
