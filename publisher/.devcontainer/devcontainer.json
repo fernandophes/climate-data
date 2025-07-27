@@ -1,0 +1,55 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/java
+{
+	"name": "Java",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/devcontainers/java:1-21-bullseye",
+	"features": {
+		"ghcr.io/devcontainers/features/java:1": {
+			"version": "none",
+			"installMaven": "true",
+			"mavenVersion": "3.8.6"
+		},
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
+			"moby": true,
+			"azureDnsAutoDetection": true,
+			"installDockerBuildx": true,
+			"installDockerComposeSwitch": true
+		},
+		"ghcr.io/nils-geistmann/devcontainers-features/zsh:0": {
+			"setLocale": true,
+			"plugins": "git docker"
+		}
+	},
+	"postCreateCommand": "mkdir /home/vscode/.m2; cp /workspaces/climate-data/default-settings.xml /home/vscode/.m2/settings.xml",
+	// "waitFor": "postCreateCommand",
+	"runArgs": ["--env-file", "./.env"],
+	"appPort": "8070:8080",
+	"forwardPorts": [
+		5672
+	],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"vscjava.vscode-java-pack",
+				"SonarSource.sonarlint-vscode",
+				"vmware.vscode-boot-dev-pack",
+				"wmaurer.change-case",
+				"github.vscode-github-actions",
+				"vscode-icons-team.vscode-icons",
+				"redhat.vscode-xml",
+				"redhat.vscode-yaml",
+				"eamodio.gitlens",
+				"cweijan.vscode-database-client2"
+			]
+		}
+	}
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "java -version",
+	// Configure tool-specific properties.
+	// "customizations": {},
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}

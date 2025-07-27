@@ -1,6 +1,8 @@
 package br.edu.ufersa.cc.pd.contracts;
 
-public interface MqProducer<T> {
+import java.io.Closeable;
+
+public interface MqProducer<T> extends Closeable {
 
     void send(T message);
 

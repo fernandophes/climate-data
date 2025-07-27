@@ -97,7 +97,18 @@
       "durable": true,
       "auto_delete": false,
       "arguments": {}
+<<<<<<< HEAD
     }    
+=======
+    },
+    {
+      "name": "client.climate_data.all_real_time",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+>>>>>>> main
   ],
   "exchanges": [
     {
@@ -110,7 +121,20 @@
       "arguments": {}
     },
     {
+<<<<<<< HEAD
       "name": "client_final",
+=======
+      "name": "publisher",
+      "vhost": "/",
+      "type": "fanout",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "client",
+>>>>>>> main
       "vhost": "/",
       "type": "fanout",
       "durable": true,
@@ -147,6 +171,7 @@
       "vhost": "/"
     },
     {
+<<<<<<< HEAD
       "source": "client_final",
       "destination": "client_final.client.all",
       "routing_key": "climate_data.send",
@@ -158,6 +183,19 @@
       "source": "client_http",
       "destination": "client_http.on_demand.all",
       "routing_key": "on_demand.all",
+=======
+      "source": "publisher",
+      "destination": "client.climate_data.all",
+      "routing_key": "climate_data.client",
+>>>>>>> main
+      "destination_type": "queue",
+      "arguments": {},
+      "vhost": "/"
+    },
+    {
+      "source": "publisher",
+      "destination": "client.climate_data.all_real_time",
+      "routing_key": "climate_data.client",
       "destination_type": "queue",
       "arguments": {},
       "vhost": "/"

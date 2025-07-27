@@ -12,7 +12,6 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 
 import br.edu.ufersa.cc.pd.contracts.MqConnection;
-import br.edu.ufersa.cc.pd.contracts.MqSubscriber;
 import br.edu.ufersa.cc.pd.dto.MqConnectionData;
 import br.edu.ufersa.cc.pd.exceptions.MqConnectionException;
 import br.edu.ufersa.cc.pd.exceptions.MqProducerException;
@@ -21,7 +20,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class RabbitMqConnection<T> implements MqConnection<T>, MqSubscriber<T> {
+public class RabbitMqConnection<T> implements MqConnection<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(RabbitMqConnection.class.getSimpleName());
 
@@ -54,29 +53,9 @@ public class RabbitMqConnection<T> implements MqConnection<T>, MqSubscriber<T> {
         }
     }
 
-    @Override
-    public T receive() {
+    public void subscribe(final Consumer<T> consumer) {
         try {
-            LOG.info("Attempting to receive message from queue: {}", queue);
-            final var response = channel.basicGet(exchange + "." + queue, true);
-
-            if (response == null) {
-                LOG.debug("No message available in queue: {}", queue);
-                return null;
-            }
-
-            final var messageAsString = new String(response.getBody());
-
-            return (T) messageAsString;
-        } catch (final IOException e) {
-            LOG.info("Failed to receive message from queue '{}': {}", queue, e.getMessage(), e);
-            throw new MqConnectionException(e);
-        }
-    }
-
-    public String subscribe(final Consumer<T> consumer) {
-        try {
-            return channel.basicConsume(String.join(".", exchange, queue), true, (tag, delivery) -> {
+            channel.basicConsume(String.join(".", exchange, queue), true, (tag, delivery) -> {
                 final var messageAsString = new String(delivery.getBody(), dataModel);
                 LOG.info("Mensagem recebida: {}", messageAsString);
 
