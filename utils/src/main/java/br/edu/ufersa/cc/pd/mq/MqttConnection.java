@@ -46,27 +46,8 @@ public class MqttConnection<T> implements MqConnection<T> {
       final var brokerUrl = String.format("tcp://%s:%d", credentials.getHost(), credentials.getPort());
       client = new MqttClient(brokerUrl, clientId);
 
-
-      client.setCallback(new MqttCallback() {
-        @Override
-        public void connectionLost(final Throwable cause) {
-          LOG.warn("MQTT connection lost", cause);
-        }
-
-        @Override
-        public void messageArrived(final String topic, final MqttMessage message) throws Exception {
-          final var messageAsString = new String(message.getPayload());
-          LOG.debug("Message received on topic {}: {}", topic, messageAsString);
-        }
-
-        @Override
-        public void deliveryComplete(final IMqttDeliveryToken token) {
-          LOG.debug("Message delivery complete: {}", token.getMessageId());
-        }
-      });
-
       client.connect(configureConnectionOptions());
-      LOG.info("Connected to MQTT broker and subscribed to topic: {}", topicSendMapper);
+      LOG.info("Connected to MQTT broker");
     } catch (final MqttException e) {
       throw new MqConnectionException("Failed to create MQTT connection", e);
     }

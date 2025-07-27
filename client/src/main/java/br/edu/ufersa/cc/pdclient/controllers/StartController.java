@@ -19,12 +19,6 @@ public class StartController {
 
     private static final Logger LOG = LoggerFactory.getLogger(StartController.class.getSimpleName());
 
-    private static final String QUEUE = "climate_data.all";
-    private static final String EXCHANGE = "client";
-    private static final String EXCHANGE_TYPE = "fanout";
-    private static final String ROUTING_KEY = "";
-    private static final String DATA_MODEL = "UTF-8";
-
     @FXML
     private TextField hostField;
 
@@ -41,24 +35,25 @@ public class StartController {
     private void runRabbitMqClient() throws IOException {
         LOG.info("Dados: {}", getConnectionData());
 
-        final var connection = new RabbitMqConnection<>(getConnectionData(), DroneMessage.class, QUEUE, EXCHANGE,
-                EXCHANGE_TYPE, ROUTING_KEY, DATA_MODEL);
+        final var connection = new RabbitMqConnection<>(getConnectionData(), DroneMessage.class, "client.on_demand",
+                "client", "", "UTF-8");
         connection.createConnection();
 
         final var receiverService = new ReceiverService(connection);
-        Main.setReceiverService(receiverService);
-        Main.setMqImplementation("RabbitMq");
-        Main.setRoot("dashboard");
+        App.setReceiverService(receiverService);
+        App.setMqImplementation("RabbitMq");
+        App.setRoot("dashboard");
     }
 
     @FXML
     private void runMqttClient() throws IOException {
-        final var connection = new MqttConnection<>(getConnectionData(),
-                DroneMessage.class, QUEUE);
+        final var connection = new MqttConnection<>(getConnectionData(), DroneMessage.class,
+                message -> "client.real_time." + message.getDroneName(), () -> "client.real_time.*");
+        connection.createConnection();
         final var receiverService = new ReceiverService(connection);
-        Main.setReceiverService(receiverService);
-        Main.setMqImplementation("MQTT");
-        Main.setRoot("dashboard");
+        App.setReceiverService(receiverService);
+        App.setMqImplementation("MQTT");
+        App.setRoot("dashboard");
     }
 
     private MqConnectionData getConnectionData() {
