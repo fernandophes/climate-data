@@ -82,10 +82,10 @@ public class RabbitMqConnection<T> implements MqConnection<T> {
     @Override
     public void send(final T message) {
         try {
-            final var messageBytes = message.toString().getBytes(dataModel);
+            final var json = JsonUtils.toJson(message);
+            channel.basicPublish(exchange, routingKey, null, json.getBytes(dataModel));
 
-            channel.basicPublish(exchange, routingKey, null, messageBytes);
-            LOG.info("Message sent: {}", message);
+            LOG.info("Message sent: {}", json);
         } catch (final Exception e) {
             throw new MqProducerException("Failed to send message", e);
         }
