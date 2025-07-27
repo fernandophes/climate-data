@@ -77,7 +77,6 @@ services:
       - "8081:8080"
     networks:
       - climate-data
-    # command: ["sh", "-c", "sleep 15 && java -jar app.jar"]
 
   drone-sul:
     build:
@@ -153,56 +152,6 @@ services:
       - "8084:8080"
     networks:
       - climate-data
-
-  # drone-central:
-  #   build:
-  #     context: ./drone
-  #     dockerfile: Dockerfile
-  #     args:
-  #       - GITHUB_USERNAME=${GITHUB_USERNAME}
-  #       - GITHUB_TOKEN=${GITHUB_TOKEN}
-  #   depends_on:
-  #     rabbitmq:
-  #       condition: service_healthy
-  #   environment:
-  #     - DRONE_NAME=Central
-  #     - DRONE_PORT=8085
-  #     - DRONE_DELIMITER=|
-  #     - DRONE_START=[
-  #     - DRONE_END=]
-  #     - MQ_HOST=rabbitmq
-  #     - MQ_PORT=5672
-  #     - MQ_USERNAME=drones
-  #     - MQ_PASSWORD=123456
-  #   ports:
-  #     - "8085:8080"
-  #   networks:
-  #     - climate-data
-
-  # drone-local:
-  #   build:
-  #     context: ./drone
-  #     dockerfile: Dockerfile
-  #     args:
-  #       - GITHUB_USERNAME=${GITHUB_USERNAME}
-  #       - GITHUB_TOKEN=${GITHUB_TOKEN}
-  #   depends_on:
-  #     rabbitmq:
-  #       condition: service_healthy
-  #   environment:
-  #     - DRONE_NAME=Local
-  #     - DRONE_PORT=8086
-  #     - DRONE_DELIMITER=|
-  #     - DRONE_START=[
-  #     - DRONE_END=]
-  #     - MQ_HOST=rabbitmq
-  #     - MQ_PORT=5672
-  #     - MQ_USERNAME=drones
-  #     - MQ_PASSWORD=123456
-  #   ports:
-  #     - "8086:8080"
-  #   networks:
-  #     - climate-data
 
   gateway:
     build:

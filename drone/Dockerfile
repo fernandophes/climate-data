@@ -25,7 +25,7 @@ FROM eclipse-temurin:21-jre
 WORKDIR /app
 
 # Copy the built JAR file from the previous stage to the container
-COPY --from=build /app/target/drone-*-jar-with-dependencies.jar app.jar
+COPY --from=build /app/target/*-jar-with-dependencies.jar app.jar
 
 # Set the command to run the application
 CMD ["java", "-jar", "app.jar"]
