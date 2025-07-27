@@ -50,65 +50,61 @@
   ],
   "queues": [
     {
-      "name": "drones.climate_data.send",
+      "name": "drones.send",
       "vhost": "/",
       "durable": true,
       "auto_delete": false,
       "arguments": {}
     },
     {
-      "name": "client_final.client.all",
+      "name": "publisher.real_time",
       "vhost": "/",
       "durable": true,
       "auto_delete": false,
       "arguments": {}
     },
     {
-      "name": "mqtt.climate_data.Norte",
+      "name": "publisher.on_demand",
       "vhost": "/",
       "durable": true,
       "auto_delete": false,
       "arguments": {}
     },
     {
-      "name": "mqtt.climate_data.Sul",
+      "name": "client.real_time.Norte",
       "vhost": "/",
       "durable": true,
       "auto_delete": false,
       "arguments": {}
     },
     {
-      "name": "mqtt.climate_data.Leste",
+      "name": "client.real_time.Sul",
       "vhost": "/",
       "durable": true,
       "auto_delete": false,
       "arguments": {}
     },
     {
-      "name": "mqtt.climate_data.Oeste",
+      "name": "client.real_time.Leste",
       "vhost": "/",
       "durable": true,
       "auto_delete": false,
       "arguments": {}
     },
     {
-      "name": "client_http.on_demand.all",
+      "name": "client.real_time.Oeste",
       "vhost": "/",
       "durable": true,
       "auto_delete": false,
       "arguments": {}
-<<<<<<< HEAD
+    },
+    {
+      "name": "client.on_demand",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
     }    
-=======
-    },
-    {
-      "name": "client.climate_data.all_real_time",
-      "vhost": "/",
-      "durable": true,
-      "auto_delete": false,
-      "arguments": {}
-    }
->>>>>>> main
   ],
   "exchanges": [
     {
@@ -121,12 +117,18 @@
       "arguments": {}
     },
     {
-<<<<<<< HEAD
-      "name": "client_final",
-=======
       "name": "publisher",
       "vhost": "/",
-      "type": "fanout",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "client.real_time",
+      "vhost": "/",
+      "type": "topic",
       "durable": true,
       "auto_delete": false,
       "internal": false,
@@ -134,25 +136,6 @@
     },
     {
       "name": "client",
->>>>>>> main
-      "vhost": "/",
-      "type": "fanout",
-      "durable": true,
-      "auto_delete": false,
-      "internal": false,
-      "arguments": {}
-    },
-    {
-      "name": "amq.topic",
-      "vhost": "/",
-      "type": "topic",
-      "durable": true,
-      "auto_delete": false,
-      "internal": false,
-      "arguments": {}
-    }, 
-    {
-      "name": "client_http",
       "vhost": "/",
       "type": "fanout",
       "durable": true,
@@ -164,70 +147,64 @@
   "bindings": [
     {
       "source": "drones",
-      "destination": "drones.climate_data.send",
-      "routing_key": "climate_data.send",
-      "destination_type": "queue",
-      "arguments": {},
-      "vhost": "/"
-    },
-    {
-<<<<<<< HEAD
-      "source": "client_final",
-      "destination": "client_final.client.all",
-      "routing_key": "climate_data.send",
-      "destination_type": "queue",
-      "arguments": {},
-      "vhost": "/"
-    },
-    {
-      "source": "client_http",
-      "destination": "client_http.on_demand.all",
-      "routing_key": "on_demand.all",
-=======
-      "source": "publisher",
-      "destination": "client.climate_data.all",
-      "routing_key": "climate_data.client",
->>>>>>> main
+      "destination": "drones.send",
+      "routing_key": "send",
       "destination_type": "queue",
       "arguments": {},
       "vhost": "/"
     },
     {
       "source": "publisher",
-      "destination": "client.climate_data.all_real_time",
-      "routing_key": "climate_data.client",
+      "destination": "publisher.real_time",
+      "routing_key": "real_time",
       "destination_type": "queue",
       "arguments": {},
       "vhost": "/"
     },
     {
-      "source": "amq.topic",
-      "destination": "mqtt.climate_data.Norte",
-      "routing_key": "climate_data.Norte",
+      "source": "publisher",
+      "destination": "publisher.on_demand",
+      "routing_key": "on_demand",
       "destination_type": "queue",
       "arguments": {},
       "vhost": "/"
     },
     {
-      "source": "amq.topic",
-      "destination": "mqtt.climate_data.Sul",
-      "routing_key": "climate_data.Sul",
+      "source": "client",
+      "destination": "client.on_demand",
+      "routing_key": "on_demand",
       "destination_type": "queue",
       "arguments": {},
       "vhost": "/"
     },
     {
-      "source": "amq.topic",
-      "destination": "mqtt.climate_data.Leste",
-      "routing_key": "climate_data.Leste",
+      "source": "client.real_time",
+      "destination": "client.real_time.Norte",
+      "routing_key": "Norte",
       "destination_type": "queue",
       "arguments": {},
       "vhost": "/"
     },
     {
-      "source": "amq.topic",
-      "destination": "mqtt.climate_data.Oeste",
-      "routing_key": "climate_data.Oeste",
+      "source": "client.real_time",
+      "destination": "client.real_time.Sul",
+      "routing_key": "Sul",
+      "destination_type": "queue",
+      "arguments": {},
+      "vhost": "/"
+    },
+    {
+      "source": "client.real_time",
+      "destination": "client.real_time.Leste",
+      "routing_key": "Leste",
+      "destination_type": "queue",
+      "arguments": {},
+      "vhost": "/"
+    },
+    {
+      "source": "client.real_time",
+      "destination": "client.real_time.Oeste",
+      "routing_key": "Oeste",
       "destination_type": "queue",
       "arguments": {},
       "vhost": "/"

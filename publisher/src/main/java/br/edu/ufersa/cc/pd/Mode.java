@@ -7,8 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum Mode {
 
-    REAL_TIME("climate_data.all_real_time"),
-    ON_DEMAND("climate_data.all");
+    REAL_TIME("publisher.real_time"),
+    ON_DEMAND("publisher.on_demand");
 
     private final String queueName;
 

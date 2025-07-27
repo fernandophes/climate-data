@@ -112,8 +112,10 @@ public class MqttConnection<T> implements MqConnection<T> {
       final var mqttMessage = new MqttMessage(messageJson.getBytes());
       mqttMessage.setQos(1); // At least once delivery
 
-      client.publish(topicSendMapper.apply(message), mqttMessage);
-      LOG.info("Message sent to topic {}: {}", topicSendMapper, message);
+      final var topic = topicSendMapper.apply(message);
+
+      client.publish(topic, mqttMessage);
+      LOG.info("Message sent to topic {}: {}", topic, message);
 
     } catch (final MqttException e) {
       throw new MqProducerException("Failed to send MQTT message", e);

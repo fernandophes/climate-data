@@ -25,7 +25,7 @@ public class Main {
             final var drone = launch();
 
             // Fix: Add queue parameter as first argument
-            final var mqConnection = new DroneConnection("drones.climate_data.send", "drones", "fanout", "", "UTF-8");
+            final var mqConnection = new DroneConnection("drones.send", "drones",  "send", "UTF-8");
             mqConnection.createConnection();
 
             drone.subscribe(mqConnection::send);

@@ -17,30 +17,19 @@ public class Main {
         LOG.info("Iniciando Gateway...");
 
         // Fila que recebe os dados dos drones
-        final var mqConsumerFromDrones = new GatewayConnection("climate_data.send", "drones", "fanout", "", "UTF-8");
+        final var mqConsumerFromDrones = new GatewayConnection("drones.send", "drones", "send", "UTF-8");
         mqConsumerFromDrones.createConnection();
 
-<<<<<<< HEAD
-        final var mqProducerToClientQueue = new GatewayConnection("client_http.on_demand.all", "client_http", "fanout", "",
-                "UTF-8");
-        mqProducerToClientQueue.createConnection();
-
-        // final var port = Integer.parseInt(System.getenv("GATEWAY_PORT"));
-        final var port = 8091;
-        final var gateway = new Gateway(port, mqConsumerFromDrones, mqProducerToClientQueue);
-=======
         // Fila para publisher em tempo real
-        final var realTimeMqProducer = new GatewayConnection("climate_data.all_real_time", "client", "fanout", "",
-                "UTF-8");
+        final var realTimeMqProducer = new GatewayConnection("publisher.real_time", "publisher", "real_time", "UTF-8");
         realTimeMqProducer.createConnection();
 
         // Fila para publisher sob demanda
-        final var onDemandMqProducer = new GatewayConnection("climate_data.all", "client", "fanout", "", "UTF-8");
+        final var onDemandMqProducer = new GatewayConnection("publisher.on_demand", "publisher", "on_demand", "UTF-8");
         onDemandMqProducer.createConnection();
 
         final var port = Integer.parseInt(System.getenv("GATEWAY_PORT"));
         final var gateway = new Gateway(port, mqConsumerFromDrones, realTimeMqProducer, onDemandMqProducer);
->>>>>>> main
         EXECUTOR.submit(gateway);
     }
 

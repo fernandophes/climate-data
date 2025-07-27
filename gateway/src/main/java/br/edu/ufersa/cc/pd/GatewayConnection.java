@@ -7,13 +7,13 @@ import br.edu.ufersa.cc.pd.utils.dto.DroneMessage;
 public class GatewayConnection extends RabbitMqConnection<DroneMessage> {
 
     public GatewayConnection(final MqConnectionData data, final Class<DroneMessage> messageType, final String queue,
-            final String exchange, final String exchangeType, final String routingKey, final String dataModel) {
-        super(data, messageType, queue, exchange, exchangeType, routingKey, dataModel);
+            final String exchange, final String routingKey, final String dataModel) {
+        super(data, messageType, queue, exchange, routingKey, dataModel);
     }
 
-    public GatewayConnection(final String queue, final String exchange, final String exchangeType,
-            final String routingKey, final String dataModel) {
-        this(MqConnectionData.rabbitMq(), DroneMessage.class, queue, exchange, exchangeType, routingKey, dataModel);
+    public GatewayConnection(final String queue, final String exchange, final String routingKey,
+            final String dataModel) {
+        this(MqConnectionData.rabbitMq(), DroneMessage.class, queue, exchange, routingKey, dataModel);
     }
 
 }
