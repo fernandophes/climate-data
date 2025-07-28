@@ -2,9 +2,6 @@ package br.edu.ufersa.cc.pdclient.controllers;
 
 import java.io.IOException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import br.edu.ufersa.cc.pd.dto.MqConnectionData;
 import br.edu.ufersa.cc.pd.mq.MqttConnection;
 import br.edu.ufersa.cc.pd.mq.RabbitMqConnection;
@@ -17,8 +14,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
 public class StartController {
-
-    private static final Logger LOG = LoggerFactory.getLogger(StartController.class.getSimpleName());
 
     @FXML
     private TextField hostField;
@@ -46,14 +41,9 @@ public class StartController {
 
     @FXML
     private void runHttpClient() throws IOException {
-        final var connection = new RabbitMqConnection<>(getConnectionData(Mode.ON_DEMAND), DroneMessage.class, "client.on_demand",
-                "client", "", "UTF-8");
-        connection.createConnection();
-
-        final var receiverService = new ReceiverService(connection);
-        App.setReceiverService(receiverService);
+        App.setHost(hostField.getText());
         App.setMqImplementation("HTTP");
-        App.setRoot("dashboard");
+        App.setRoot("on-demand");
     }
 
     @FXML

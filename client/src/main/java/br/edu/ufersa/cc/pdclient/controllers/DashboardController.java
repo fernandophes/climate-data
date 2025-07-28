@@ -2,9 +2,6 @@ package br.edu.ufersa.cc.pdclient.controllers;
 
 import java.io.IOException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import br.edu.ufersa.cc.pdclient.App;
 import br.edu.ufersa.cc.pdclient.dto.CaptureDto;
 import br.edu.ufersa.cc.pdclient.services.CaptureService;
@@ -23,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DashboardController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DashboardController.class.getSimpleName());
     private static final String TODAS = "Todas";
 
     private final CaptureService databaseService = new CaptureService();

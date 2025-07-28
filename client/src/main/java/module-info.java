@@ -1,5 +1,6 @@
 module br.edu.ufersa.cc.pdclient {
     requires java.logging;
+    requires java.net.http;
     requires javafx.fxml;
     requires javafx.controls;
     requires jakarta.persistence;
