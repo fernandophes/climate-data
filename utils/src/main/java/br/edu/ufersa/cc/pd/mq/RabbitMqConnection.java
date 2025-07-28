@@ -66,6 +66,55 @@ public class RabbitMqConnection<T> implements MqConnection<T> {
         }
     }
 
+    public void subscribeLimited(final Consumer<T> consumer, int maxMessages) {
+        try {
+            channel.basicQos(maxMessages); // Limit prefetch to maxMessages
+            final int[] count = { 0 };
+            channel.basicConsume(queue, false, (tag, delivery) -> {
+                if (count[0] < maxMessages) {
+                    final var messageAsString = new String(delivery.getBody(), dataModel);
+                    LOG.info("Mensagem recebida: {}", messageAsString);
+
+                    T obj = JsonUtils.fromJson(messageAsString, messageType);
+                    LOG.info("Mensagem convertida: {}", obj);
+
+                    consumer.accept(obj);
+                    channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
+                    count[0]++;
+                    if (count[0] >= maxMessages) {
+                        channel.basicCancel(tag);
+                    }
+                }
+            }, tag -> LOG.error("Leitura cancelada: {}", tag));
+        } catch (IOException e) {
+            throw new MqConnectionException(e);
+        }
+    }
+
+    /**
+     * Synchronously fetches and acknowledges up to maxMessages from the queue.
+     */
+    public void getLimited(final Consumer<T> consumer, int maxMessages) {
+        try {
+            for (int i = 0; i < maxMessages; i++) {
+                var response = channel.basicGet(queue, false);
+                if (response == null) {
+                    break; // No more messages in the queue
+                }
+                final var messageAsString = new String(response.getBody(), dataModel);
+                LOG.info("Mensagem recebida: {}", messageAsString);
+
+                T obj = JsonUtils.fromJson(messageAsString, messageType);
+                LOG.info("Mensagem convertida: {}", obj);
+
+                consumer.accept(obj);
+                channel.basicAck(response.getEnvelope().getDeliveryTag(), false);
+            }
+        } catch (IOException e) {
+            throw new MqConnectionException(e);
+        }
+    }
+
     @Override
     public void send(final T message) {
         try {

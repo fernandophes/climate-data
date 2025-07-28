@@ -5,29 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3ffa4d01-35d7-45b0-b750-5e20a690cd0e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/RabbitMQLink/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RabbitMQLink/src/main/java/edu/ufersa/cc/LinkConnection.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RabbitMQLink/src/main/java/edu/ufersa/cc/Main.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RabbitMQLink/src/main/java/edu/ufersa/cc/api/controllers/GetClimateDataController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RabbitMQLink/src/main/java/edu/ufersa/cc/producer/OnDemandProducer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RabbitMQLink/src/test/java/edu/ufersa/cc/AppTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/br/edu/ufersa/cc/pdclient/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/br/edu/ufersa/cc/pdclient/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/java/br/edu/ufersa/cc/pdclient/controllers/StartController.java" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/java/br/edu/ufersa/cc/pdclient/controllers/StartController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/definitions.json" beforeDir="false" afterPath="$PROJECT_DIR$/definitions.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drone/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/drone/.idea/encodings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/drone/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/drone/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/drone/src/main/java/br/edu/ufersa/cc/pd/drone/Drone.java" beforeDir="false" afterPath="$PROJECT_DIR$/drone/src/main/java/br/edu/ufersa/cc/pd/drone/Drone.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/drone/src/main/java/br/edu/ufersa/cc/pd/mq/DroneConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/drone/src/main/java/br/edu/ufersa/cc/pd/mq/DroneConnection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway/mqtt-client-42a2a746-1d8c-4922-b44b-47ba496c6b75-tcplocalhost1883/.lck" beforeDir="false" afterPath="$PROJECT_DIR$/RabbitMQLink/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway/mqtt-client-cac8814c-76fd-43c6-a208-8cb72b7e7487-tcplocalhost1883/.lck" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway/src/main/java/br/edu/ufersa/cc/pd/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/src/main/java/br/edu/ufersa/cc/pd/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gateway/src/main/java/br/edu/ufersa/cc/pd/gateway/Gateway.java" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/src/main/java/br/edu/ufersa/cc/pd/gateway/Gateway.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RabbitMQLink/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/RabbitMQLink/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RabbitMQLink/src/main/java/edu/ufersa/cc/LinkConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/RabbitMQLink/src/main/java/edu/ufersa/cc/LinkConnection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RabbitMQLink/src/main/java/edu/ufersa/cc/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/RabbitMQLink/src/main/java/edu/ufersa/cc/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RabbitMQLink/src/main/java/edu/ufersa/cc/api/controllers/GetClimateDataController.java" beforeDir="false" afterPath="$PROJECT_DIR$/RabbitMQLink/src/main/java/edu/ufersa/cc/api/controllers/GetClimateDataController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RabbitMQLink/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/RabbitMQLink/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gateway/run.sh" beforeDir="false" afterPath="$PROJECT_DIR$/gateway/run.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils/src/main/java/br/edu/ufersa/cc/pd/mq/RabbitMqConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/utils/src/main/java/br/edu/ufersa/cc/pd/mq/RabbitMqConnection.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -45,10 +30,10 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 5
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 5
+}</component>
   <component name="ProjectId" id="30QVVxnJe4e4HjUF06qCWhg7Nys" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -63,7 +48,8 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "feat/third-unit",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/Users/vitorrafael/Desktop/studies/ufersa/distributed-programming/third-unit/climate-data",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -81,6 +67,7 @@
       <option name="presentableId" value="Default" />
       <updated>1753559812223</updated>
       <workItem from="1753559813790" duration="16165000" />
+      <workItem from="1753651774838" duration="5483000" />
     </task>
     <servers />
   </component>
@@ -88,6 +75,15 @@
     <option name="version" value="3" />
   </component>
   <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/utils/src/main/java/br/edu/ufersa/cc/pd/dto/MqConnectionData.java</url>
+          <line>17</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
     <watches-manager>
       <configuration name="SpringBootApplicationConfigurationType">
         <watch expression="messageAsString" language="JAVA" />

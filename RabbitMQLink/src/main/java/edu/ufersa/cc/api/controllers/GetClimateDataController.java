@@ -13,38 +13,29 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 @RestController
-@RequestMapping("/climate-data")
 public class GetClimateDataController {
 
     final LinkConnection mqConsumerFinalClient;
 
     public GetClimateDataController() {
-        final var mqProducerFinalClient = new LinkConnection("on_demand.all", "client_http", "fanout", "",
+        final var mqProducerFinalClient = new LinkConnection("client.on_demand", "client", "",
                 "UTF-8");
         this.mqConsumerFinalClient = mqProducerFinalClient;
         mqProducerFinalClient.createConnection();
     }
 
-    @GetMapping
-    ResponseEntity<List<DroneMessage>> getClimateData() {
+    @GetMapping("/climate-data")
+    ResponseEntity<?> getClimateData() {
 
         List<DroneMessage> climateData = Collections.synchronizedList(new ArrayList<>());
-        CountDownLatch latch = new CountDownLatch(100);
 
-        mqConsumerFinalClient.subscribe(message -> {
-            if (latch.getCount() > 0) {
-                climateData.add(message);
-                latch.countDown();
-            }
-        });
+        mqConsumerFinalClient.getLimited(message -> {
+            climateData.add(message);
+        }, 50);
 
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            return ResponseEntity.status(500).build();
+        if (climateData.isEmpty()) {
+            return ResponseEntity.ok("No climate data available in RabbitMQ queue.");
         }
-
         return ResponseEntity.ok(climateData);
     }
 }
