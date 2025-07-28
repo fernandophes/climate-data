@@ -1,23 +1,4 @@
 services:
-  db_pg:
-    image: postgres:16
-    container_name: postgres_pg
-    restart: always
-    environment:
-      POSTGRES_DB: climate_data
-      POSTGRES_USER: climate_data
-      POSTGRES_PASSWORD: climate_data
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    networks:
-      - climate-data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U climate_data -d climate_data"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   rabbitmq:
     container_name: rabbitmq-climate
@@ -77,7 +58,6 @@ services:
       - "8081:8080"
     networks:
       - climate-data
-    # command: ["sh", "-c", "sleep 15 && java -jar app.jar"]
 
   drone-sul:
     build:
@@ -154,56 +134,6 @@ services:
     networks:
       - climate-data
 
-  # drone-central:
-  #   build:
-  #     context: ./drone
-  #     dockerfile: Dockerfile
-  #     args:
-  #       - GITHUB_USERNAME=${GITHUB_USERNAME}
-  #       - GITHUB_TOKEN=${GITHUB_TOKEN}
-  #   depends_on:
-  #     rabbitmq:
-  #       condition: service_healthy
-  #   environment:
-  #     - DRONE_NAME=Central
-  #     - DRONE_PORT=8085
-  #     - DRONE_DELIMITER=|
-  #     - DRONE_START=[
-  #     - DRONE_END=]
-  #     - MQ_HOST=rabbitmq
-  #     - MQ_PORT=5672
-  #     - MQ_USERNAME=drones
-  #     - MQ_PASSWORD=123456
-  #   ports:
-  #     - "8085:8080"
-  #   networks:
-  #     - climate-data
-
-  # drone-local:
-  #   build:
-  #     context: ./drone
-  #     dockerfile: Dockerfile
-  #     args:
-  #       - GITHUB_USERNAME=${GITHUB_USERNAME}
-  #       - GITHUB_TOKEN=${GITHUB_TOKEN}
-  #   depends_on:
-  #     rabbitmq:
-  #       condition: service_healthy
-  #   environment:
-  #     - DRONE_NAME=Local
-  #     - DRONE_PORT=8086
-  #     - DRONE_DELIMITER=|
-  #     - DRONE_START=[
-  #     - DRONE_END=]
-  #     - MQ_HOST=rabbitmq
-  #     - MQ_PORT=5672
-  #     - MQ_USERNAME=drones
-  #     - MQ_PASSWORD=123456
-  #   ports:
-  #     - "8086:8080"
-  #   networks:
-  #     - climate-data
-
   gateway:
     build:
       context: ./gateway
@@ -216,11 +146,6 @@ services:
         condition: service_healthy
     environment:
       - GATEWAY_PORT=8091
-      - POSTGRES_HOST=db_pg
-      - POSTGRES_PORT=5432
-      - POSTGRES_DB=climate_data
-      - POSTGRES_USER=climate_data
-      - POSTGRES_PASSWORD=climate_data
       - MQ_HOST=rabbitmq
       - MQ_PORT=5672
       - MQ_USERNAME=drones
@@ -230,7 +155,52 @@ services:
       - "8091:8080"
     networks:
       - climate-data
-    command: ["sh", "-c", "sleep 20 && java -jar app.jar"]
+
+  publisher-real-time:
+    build:
+      context: ./publisher
+      dockerfile: Dockerfile
+      args:
+        - GITHUB_USERNAME=${GITHUB_USERNAME}
+        - GITHUB_TOKEN=${GITHUB_TOKEN}
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - MODE=REAL_TIME
+      - PUBLISHER_PORT=8098
+      - MQ_HOST=rabbitmq
+      - MQ_PORT=5672
+      - MQ_USERNAME=drones
+      - MQ_PASSWORD=123456
+      - MQTT_PORT=1883
+    ports:
+      - "8098:8080"
+    networks:
+      - climate-data
+
+  publisher-on-demand:
+    build:
+      context: ./publisher
+      dockerfile: Dockerfile
+      args:
+        - GITHUB_USERNAME=${GITHUB_USERNAME}
+        - GITHUB_TOKEN=${GITHUB_TOKEN}
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - MODE=ON_DEMAND
+      - PUBLISHER_PORT=8099
+      - MQ_HOST=rabbitmq
+      - MQ_PORT=5672
+      - MQ_USERNAME=drones
+      - MQ_PASSWORD=123456
+      - MQTT_PORT=1883
+    ports:
+      - "8099:8080"
+    networks:
+      - climate-data
 
 configs:
   rabbitmq-plugins:
