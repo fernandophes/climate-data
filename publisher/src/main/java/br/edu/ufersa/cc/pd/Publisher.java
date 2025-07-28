@@ -37,9 +37,9 @@ public class Publisher extends App {
     public void run() {
         running = true;
 
-        LOG.info("Inscrevendo-se para ler a fila vinda do gateway...", isRunning());
+        LOG.info("Inscrevendo-se para ler a fila vinda do gateway...");
         consumer.subscribe(producer::send);
-        LOG.info("Inscrito!", isRunning());
+        LOG.info("Inscrito!");
     }
 
     @Override

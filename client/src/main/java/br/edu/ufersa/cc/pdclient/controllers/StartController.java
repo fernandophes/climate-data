@@ -53,7 +53,7 @@ public class StartController {
         final var receiverService = new ReceiverService(connection);
         App.setReceiverService(receiverService);
         App.setMqImplementation("MQTT");
-        App.setRoot("dashboard");
+        App.setRoot("real-time");
     }
 
     private MqConnectionData getConnectionData() {
