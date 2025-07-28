@@ -202,6 +202,26 @@ services:
     networks:
       - climate-data
 
+  http-server:
+    build:
+      context: ./RabbitMQLink
+      dockerfile: Dockerfile
+      args:
+        - GITHUB_USERNAME=${GITHUB_USERNAME}
+        - GITHUB_TOKEN=${GITHUB_TOKEN}
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - MQ_HOST=rabbitmq
+      - MQ_PORT=5672
+      - MQ_USERNAME=drones
+      - MQ_PASSWORD=123456
+    ports:
+      - "8080:8080"
+    networks:
+      - climate-data
+
 configs:
   rabbitmq-plugins:
     content: "[rabbitmq_management]."
