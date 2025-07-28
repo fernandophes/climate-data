@@ -71,34 +71,6 @@
       "arguments": {}
     },
     {
-      "name": "client.real_time.Norte",
-      "vhost": "/",
-      "durable": true,
-      "auto_delete": false,
-      "arguments": {}
-    },
-    {
-      "name": "client.real_time.Sul",
-      "vhost": "/",
-      "durable": true,
-      "auto_delete": false,
-      "arguments": {}
-    },
-    {
-      "name": "client.real_time.Leste",
-      "vhost": "/",
-      "durable": true,
-      "auto_delete": false,
-      "arguments": {}
-    },
-    {
-      "name": "client.real_time.Oeste",
-      "vhost": "/",
-      "durable": true,
-      "auto_delete": false,
-      "arguments": {}
-    },
-    {
       "name": "client.on_demand",
       "vhost": "/",
       "durable": true,
@@ -173,38 +145,6 @@
       "source": "client",
       "destination": "client.on_demand",
       "routing_key": "on_demand",
-      "destination_type": "queue",
-      "arguments": {},
-      "vhost": "/"
-    },
-    {
-      "source": "client.real_time",
-      "destination": "client.real_time.Norte",
-      "routing_key": "Norte",
-      "destination_type": "queue",
-      "arguments": {},
-      "vhost": "/"
-    },
-    {
-      "source": "client.real_time",
-      "destination": "client.real_time.Sul",
-      "routing_key": "Sul",
-      "destination_type": "queue",
-      "arguments": {},
-      "vhost": "/"
-    },
-    {
-      "source": "client.real_time",
-      "destination": "client.real_time.Leste",
-      "routing_key": "Leste",
-      "destination_type": "queue",
-      "arguments": {},
-      "vhost": "/"
-    },
-    {
-      "source": "client.real_time",
-      "destination": "client.real_time.Oeste",
-      "routing_key": "Oeste",
       "destination_type": "queue",
       "arguments": {},
       "vhost": "/"
